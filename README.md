@@ -1,0 +1,1 @@
+L0KD-1N is a simple calisthenic tracking web app built for people who like simplicity and minimalism. I was tired of apps having a millions things going on when all I wanted was a simple way to track easy workouts without the need for subscriptions or a bunch of pages to navigate through.
