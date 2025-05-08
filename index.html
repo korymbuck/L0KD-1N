@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>L0KD-1N</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>L0KD-1N</h1>
+    </header>
+
+    <main>
+      <section class="workout">
+        <h2>Push-ups: <span id="pushups-count">0</span></h2>
+        <div class="controls">
+          <button data-increment="5" data-workout="pushups">+5</button>
+          <button data-increment="10" data-workout="pushups">+10</button>
+          <button data-increment="25" data-workout="pushups">+25</button>
+        </div>
+      </section>
+
+      <section class="workout">
+        <h2>Squats: <span id="squats-count">0</span></h2>
+        <div class="controls">
+          <button data-increment="5" data-workout="squats">+5</button>
+          <button data-increment="10" data-workout="squats">+10</button>
+          <button data-increment="25" data-workout="squats">+25</button>
+        </div>
+      </section>
+
+      <section class="workout">
+        <h2>Sit-ups: <span id="situps-count">0</span></h2>
+        <div class="controls">
+          <button data-increment="5" data-workout="situps">+5</button>
+          <button data-increment="10" data-workout="situps">+10</button>
+          <button data-increment="25" data-workout="situps">+25</button>
+        </div>
+      </section>
+
+      <section class="all-time-stats">
+        <h2>ALL-TIME STATS</h2>
+        <p>Total Push-ups: <span id="all-time-pushups">0</span></p>
+        <p>Total Squats: <span id="all-time-squats">0</span></p>
+        <p>Total Sit-ups: <span id="all-time-situps">0</span></p>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
