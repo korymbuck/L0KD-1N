@@ -40,10 +40,13 @@
         collection,
       } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      window.auth = getAuth(app);
-      window.db = getFirestore(app);
+      // Initialize Firebase and resolve a promise when done
+      window.firebaseInit = new Promise((resolve) => {
+        const app = initializeApp(firebaseConfig);
+        window.auth = getAuth(app);
+        window.db = getFirestore(app);
+        resolve();
+      });
     </script>
   </head>
   <body>

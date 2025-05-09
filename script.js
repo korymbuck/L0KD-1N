@@ -1,6 +1,8 @@
 // script.js
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await window.firebaseInit; // Wait for Firebase to be initialized
+
   const auth = window.auth;
   const db = window.db;
 
@@ -112,32 +114,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  signupButton.addEventListener("click", () => {
+  signupButton.addEventListener("click", async () => {
     const email = signupEmailInput.value;
     const password = signupPasswordInput.value;
-    window.auth
-      .createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        authErrorDiv.textContent = "";
-      })
-      .catch((error) => {
-        authErrorDiv.textContent = `Sign up failed: ${error.message} (${error.code})`;
-        console.error("Signup error:", error);
-      });
+    try {
+      const userCredential = await window.auth.createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      authErrorDiv.textContent = "";
+      console.log("Signup successful:", userCredential.user);
+    } catch (error) {
+      authErrorDiv.textContent = `Sign up failed: ${error.message} (${error.code})`;
+      console.error("Signup error:", error);
+    }
   });
 
-  loginButton.addEventListener("click", () => {
+  loginButton.addEventListener("click", async () => {
     const email = loginEmailInput.value;
     const password = loginPasswordInput.value;
-    window.auth
-      .signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        authErrorDiv.textContent = "";
-      })
-      .catch((error) => {
-        authErrorDiv.textContent = `Login failed: ${error.message} (${error.code})`;
-        console.error("Login error:", error);
-      });
+    try {
+      const userCredential = await window.auth.signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      authErrorDiv.textContent = "";
+      console.log("Login successful:", userCredential.user);
+    } catch (error) {
+      authErrorDiv.textContent = `Login failed: ${error.message} (${error.code})`;
+      console.error("Login error:", error);
+    }
   });
 
   logoutButton.addEventListener("click", () => {
