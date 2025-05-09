@@ -1,31 +1,7 @@
 // script.js
 
-// Import Firebase modules
-import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-
-// Web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDGbbXg4iUI-LAGFNeX79q2UIyDqumx7fc",
-  authDomain: "l0kd-1n.firebaseapp.com",
-  projectId: "l0kd-1n",
-  storageBucket: "l0kd-1n.firebasestorage.app",
-  messagingSenderId: "76980580168",
-  appId: "1:76980580168:web:cef32b7c744d3f5ce90d7d",
-  measurementId: "G-RW34CML9M1",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const auth = window.auth;
+const db = window.db;
 
 // Get references to HTML elements
 const pushupsCount = document.getElementById("pushups-count");
@@ -38,27 +14,7 @@ const allTimePushups = document.getElementById("all-time-pushups");
 const allTimeSquats = document.getElementById("all-time-squats");
 const allTimeSitups = document.getElementById("all-time-situps");
 
-const authContainer = document.createElement("div");
-authContainer.id = "auth-container";
-authContainer.innerHTML = `
-  <h2>Sign Up</h2>
-  <input type="email" id="signup-email" placeholder="Email">
-  <input type="password" id="signup-password" placeholder="Password">
-  <button id="signup-button">Sign Up</button>
-
-  <h2>Login</h2>
-  <input type="email" id="login-email" placeholder="Email">
-  <input type="password" id="login-password" placeholder="Password">
-  <button id="login-button">Login</button>
-
-  <button id="logout-button" style="display:none;">Logout</button>
-  <div id="user-info" style="display:none;"></div>
-  <div id="auth-error" style="color:red;"></div>
-`;
-
-const mainElement = document.querySelector("main");
-mainElement.prepend(authContainer); // Add auth container at the beginning of main
-
+const authContainer = document.getElementById("auth-container");
 const signupEmailInput = document.getElementById("signup-email");
 const signupPasswordInput = document.getElementById("signup-password");
 const signupButton = document.getElementById("signup-button");
@@ -68,6 +24,7 @@ const loginButton = document.getElementById("login-button");
 const logoutButton = document.getElementById("logout-button");
 const userInfoDiv = document.getElementById("user-info");
 const authErrorDiv = document.getElementById("auth-error");
+const mainElement = document.querySelector("main");
 
 let currentUser = null;
 let workoutData = {
@@ -131,14 +88,14 @@ function updateAuthUI(user) {
   currentUser = user;
   if (user) {
     authContainer.style.display = "none";
-    document.querySelector("main").style.display = "block"; // Show workout section
+    mainElement.style.display = "block"; // Show workout section
     logoutButton.style.display = "block";
     userInfoDiv.style.display = "block";
     userInfoDiv.textContent = `Logged in as: ${user.email}`;
     loadWorkoutData(user.uid);
   } else {
     authContainer.style.display = "block";
-    document.querySelector("main").style.display = "none"; // Hide workout section
+    mainElement.style.display = "none"; // Hide workout section
     logoutButton.style.display = "none";
     userInfoDiv.style.display = "none";
     workoutData = {

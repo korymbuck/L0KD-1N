@@ -11,6 +11,40 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <script type="module">
+      // Your Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDGbbXg4iUI-LAGFNeX79q2UIyDqumx7fc",
+        authDomain: "l0kd-1n.firebaseapp.com",
+        projectId: "l0kd-1n",
+        storageBucket: "l0kd-1n.firebasestorage.app",
+        messagingSenderId: "76980580168",
+        appId: "1:76980580168:web:cef32b7c744d3f5ce90d7d",
+        measurementId: "G-RW34CML9M1",
+      };
+
+      // Import Firebase modules from CDN
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDoc,
+        collection,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      window.auth = getAuth(app);
+      window.db = getFirestore(app);
+    </script>
   </head>
   <body>
     <header>
@@ -18,6 +52,22 @@
     </header>
 
     <main>
+      <div id="auth-container">
+        <h2>Sign Up</h2>
+        <input type="email" id="signup-email" placeholder="Email" />
+        <input type="password" id="signup-password" placeholder="Password" />
+        <button id="signup-button">Sign Up</button>
+
+        <h2>Login</h2>
+        <input type="email" id="login-email" placeholder="Email" />
+        <input type="password" id="login-password" placeholder="Password" />
+        <button id="login-button">Login</button>
+
+        <button id="logout-button" style="display: none">Logout</button>
+        <div id="user-info" style="display: none"></div>
+        <div id="auth-error" style="color: red"></div>
+      </div>
+
       <section class="workout">
         <h2>Push-ups: <span id="pushups-count">0</span></h2>
         <div class="controls">
