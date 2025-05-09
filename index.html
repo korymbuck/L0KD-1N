@@ -1,42 +1,116 @@
-<script type="module">
-  // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDGbbXg4iUI-LAGFNeX79q2UIyDqumx7fc",
-    authDomain: "l0kd-1n.firebaseapp.com",
-    projectId: "l0kd-1n",
-    storageBucket: "l0kd-1n.firebasestorage.app",
-    messagingSenderId: "76980580168",
-    appId: "1:76980580168:web:cef32b7c744d3f5ce90d7d",
-    measurementId: "G-RW34CML9M1",
-  };
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>L0KD-1N</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      // Your Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDGbbXg4iUI-LAGFNeX79q2UIyDqumx7fc",
+        authDomain: "l0kd-1n.firebaseapp.com",
+        projectId: "l0kd-1n",
+        storageBucket: "l0kd-1n.firebasestorage.app",
+        messagingSenderId: "76980580168",
+        appId: "1:76980580168:web:cef32b7c744d3f5ce90d7d",
+        measurementId: "G-RW34CML9M1",
+      };
 
-  // Import Firebase modules from CDN
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import {
-    getFirestore,
-    doc,
-    setDoc,
-    getDoc,
-    collection,
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      // Import Firebase modules from CDN
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        setDoc,
+        getDoc,
+        collection,
+      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  window.firebaseConfig = firebaseConfig; // Make config global
-  window.initializeApp = initializeApp; // Make initializeApp global
-  window.getAuth = getAuth; // Make getAuth global
-  window.getFirestore = getFirestore; // Make getFirestore global
-  window.doc = doc; // Make doc global
-  window.setDoc = setDoc; // Make setDoc global
-  window.getDoc = getDoc; // Make getDoc global
-  window.collection = collection; // Make collection global
-  window.signOut = signOut; // Make signOut global
-  window.onAuthStateChanged = onAuthStateChanged; // Make onAuthStateChanged global
-  window.createUserWithEmailAndPassword = createUserWithEmailAndPassword; // Make createUserWithEmailAndPassword global
-  window.signInWithEmailAndPassword = signInWithEmailAndPassword; // Make signInWithEmailAndPassword global
-</script>
+      window.firebaseConfig = firebaseConfig; // Make config global
+      window.initializeApp = initializeApp; // Make initializeApp global
+      window.getAuth = getAuth; // Make getAuth global
+      window.getFirestore = getFirestore; // Make getFirestore global
+      window.doc = doc; // Make doc global
+      window.setDoc = setDoc; // Make setDoc global
+      window.getDoc = getDoc; // Make getDoc global
+      window.collection = collection; // Make collection global
+      window.signOut = signOut; // Make signOut global
+      window.onAuthStateChanged = onAuthStateChanged; // Make onAuthStateChanged global
+      window.createUserWithEmailAndPassword = createUserWithEmailAndPassword; // Make createUserWithEmailAndPassword global
+      window.signInWithEmailAndPassword = signInWithEmailAndPassword; // Make signInWithEmailAndPassword global
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>L0KD-1N</h1>
+    </header>
+
+    <main>
+      <div id="auth-container">
+        <h2>Sign Up</h2>
+        <input type="email" id="signup-email" placeholder="Email" />
+        <input type="password" id="signup-password" placeholder="Password" />
+        <button id="signup-button">Sign Up</button>
+
+        <h2>Login</h2>
+        <input type="email" id="login-email" placeholder="Email" />
+        <input type="password" id="login-password" placeholder="Password" />
+        <button id="login-button">Login</button>
+
+        <button id="logout-button" style="display: none">Logout</button>
+        <div id="user-info" style="display: none"></div>
+        <div id="auth-error" style="color: red"></div>
+      </div>
+
+      <section class="workout">
+        <h2>Push-ups: <span id="pushups-count">0</span></h2>
+        <div class="controls">
+          <button data-increment="5" data-workout="pushups">+5</button>
+          <button data-increment="10" data-workout="pushups">+10</button>
+          <button data-increment="25" data-workout="pushups">+25</button>
+        </div>
+      </section>
+
+      <section class="workout">
+        <h2>Squats: <span id="squats-count">0</span></h2>
+        <div class="controls">
+          <button data-increment="5" data-workout="squats">+5</button>
+          <button data-increment="10" data-workout="squats">+10</button>
+          <button data-increment="25" data-workout="squats">+25</button>
+        </div>
+      </section>
+
+      <section class="workout">
+        <h2>Sit-ups: <span id="situps-count">0</span></h2>
+        <div class="controls">
+          <button data-increment="5" data-workout="situps">+5</button>
+          <button data-increment="10" data-workout="situps">+10</button>
+          <button data-increment="25" data-workout="situps">+25</button>
+        </div>
+      </section>
+
+      <section class="all-time-stats">
+        <h2>ALL-TIME STATS</h2>
+        <p>Total Push-ups: <span id="all-time-pushups">0</span></p>
+        <p>Total Squats: <span id="all-time-squats">0</span></p>
+        <p>Total Sit-ups: <span id="all-time-situps">0</span></p>
+      </section>
+    </main>
+
+    <script src="script.js" type="module"></script>
+  </body>
+</html>
