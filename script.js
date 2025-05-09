@@ -1,14 +1,6 @@
 // script.js
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Wait for a short moment to see if window.auth is available
-  await new Promise((resolve) => setTimeout(resolve, 100));
-
-  if (!window.auth) {
-    console.error("Firebase Auth object not initialized!");
-    return;
-  }
-
+window.addEventListener("load", async () => {
   const auth = window.auth;
   const db = window.db;
 
@@ -121,8 +113,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   signupButton.addEventListener("click", async () => {
-    if (!window.auth) {
-      console.error("Firebase Auth object not initialized during signup!");
+    if (
+      !window.auth ||
+      typeof window.auth.createUserWithEmailAndPassword !== "function"
+    ) {
+      console.error(
+        "Firebase Auth object not fully initialized during signup!"
+      );
       return;
     }
     const email = signupEmailInput.value;
@@ -142,8 +139,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   loginButton.addEventListener("click", async () => {
-    if (!window.auth) {
-      console.error("Firebase Auth object not initialized during login!");
+    if (
+      !window.auth ||
+      typeof window.auth.signInWithEmailAndPassword !== "function"
+    ) {
+      console.error("Firebase Auth object not fully initialized during login!");
       return;
     }
     const email = loginEmailInput.value;
@@ -163,21 +163,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   logoutButton.addEventListener("click", () => {
-    if (window.auth) {
+    if (window.auth && typeof window.auth.signOut === "function") {
       window.auth.signOut(auth);
     } else {
-      console.error("Firebase Auth object not initialized during logout!");
+      console.error(
+        "Firebase Auth object not fully initialized during logout!"
+      );
     }
   });
 
-  // Ensure window.auth exists before attaching the listener
-  if (window.auth) {
+  // Ensure window.auth exists and has the function before attaching the listener
+  if (window.auth && typeof window.auth.onAuthStateChanged === "function") {
     window.auth.onAuthStateChanged(auth, (user) => {
       updateAuthUI(user);
     });
   } else {
     console.error(
-      "Firebase Auth object not initialized before onAuthStateChanged!"
+      "Firebase Auth object not fully initialized before onAuthStateChanged!"
     );
   }
 
