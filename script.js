@@ -46,8 +46,9 @@ function updateDisplay() {
 }
 
 function loadWorkoutData(uid) {
-  const workoutDocRef = doc(db, "users", uid);
-  getDoc(workoutDocRef)
+  const workoutDocRef = window.db.doc(db, "users", uid);
+  window.db
+    .getDoc(workoutDocRef)
     .then((docSnapshot) => {
       if (docSnapshot.exists()) {
         workoutData = docSnapshot.data();
@@ -80,8 +81,8 @@ function saveWorkoutData(uid) {
     console.error("Cannot save data: User not logged in.");
     return;
   }
-  const workoutDocRef = doc(db, "users", uid);
-  setDoc(workoutDocRef, workoutData);
+  const workoutDocRef = window.db.doc(db, "users", uid);
+  window.db.setDoc(workoutDocRef, workoutData);
 }
 
 function updateAuthUI(user) {
@@ -113,32 +114,36 @@ function updateAuthUI(user) {
 signupButton.addEventListener("click", () => {
   const email = signupEmailInput.value;
   const password = signupPasswordInput.value;
-  createUserWithEmailAndPassword(auth, email, password)
+  window.auth
+    .createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       authErrorDiv.textContent = "";
     })
     .catch((error) => {
       authErrorDiv.textContent = `Sign up failed: ${error.message} (${error.code})`;
+      console.error("Signup error:", error);
     });
 });
 
 loginButton.addEventListener("click", () => {
   const email = loginEmailInput.value;
   const password = loginPasswordInput.value;
-  signInWithEmailAndPassword(auth, email, password)
+  window.auth
+    .signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       authErrorDiv.textContent = "";
     })
     .catch((error) => {
       authErrorDiv.textContent = `Login failed: ${error.message} (${error.code})`;
+      console.error("Login error:", error);
     });
 });
 
 logoutButton.addEventListener("click", () => {
-  signOut(auth);
+  window.auth.signOut(auth);
 });
 
-onAuthStateChanged(auth, (user) => {
+window.auth.onAuthStateChanged(auth, (user) => {
   updateAuthUI(user);
 });
 
