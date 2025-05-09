@@ -1,14 +1,11 @@
 // script.js
 
 window.addEventListener("load", async () => {
-  // Initialize Firebase within script.js
-  const app = window.initializeApp(window.firebaseConfig);
-  const auth = window.getAuth(app);
-  const db = window.getFirestore(app);
+  // Initialize Firebase
+  window.initFirebase();
 
-  // Now assign auth and db to window so other parts of the script can use them
-  window.auth = auth;
-  window.db = db;
+  const auth = window.auth;
+  const db = window.db;
 
   // Get references to HTML elements
   const pushupsCount = document.getElementById("pushups-count");
@@ -119,6 +116,15 @@ window.addEventListener("load", async () => {
   }
 
   signupButton.addEventListener("click", async () => {
+    if (
+      !window.auth ||
+      typeof window.auth.createUserWithEmailAndPassword !== "function"
+    ) {
+      console.error(
+        "Firebase Auth object not fully initialized during signup!"
+      );
+      return;
+    }
     const email = signupEmailInput.value;
     const password = signupPasswordInput.value;
     try {
@@ -136,6 +142,13 @@ window.addEventListener("load", async () => {
   });
 
   loginButton.addEventListener("click", async () => {
+    if (
+      !window.auth ||
+      typeof window.auth.signInWithEmailAndPassword !== "function"
+    ) {
+      console.error("Firebase Auth object not fully initialized during login!");
+      return;
+    }
     const email = loginEmailInput.value;
     const password = loginPasswordInput.value;
     try {
@@ -147,7 +160,7 @@ window.addEventListener("load", async () => {
       authErrorDiv.textContent = "";
       console.log("Login successful:", userCredential.user);
     } catch (error) {
-      authErrorDiv.textContent = `Sign up failed: ${error.message} (${error.code})`;
+      authErrorDiv.textContent = `Login failed: ${error.message} (${error.code})`;
       console.error("Login error:", error);
     }
   });

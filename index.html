@@ -40,18 +40,21 @@
         collection,
       } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-      window.firebaseConfig = firebaseConfig; // Make config global
-      window.initializeApp = initializeApp; // Make initializeApp global
-      window.getAuth = getAuth; // Make getAuth global
-      window.getFirestore = getFirestore; // Make getFirestore global
-      window.doc = doc; // Make doc global
-      window.setDoc = setDoc; // Make setDoc global
-      window.getDoc = getDoc; // Make getDoc global
-      window.collection = collection; // Make collection global
-      window.signOut = signOut; // Make signOut global
-      window.onAuthStateChanged = onAuthStateChanged; // Make onAuthStateChanged global
-      window.createUserWithEmailAndPassword = createUserWithEmailAndPassword; // Make createUserWithEmailAndPassword global
-      window.signInWithEmailAndPassword = signInWithEmailAndPassword; // Make signInWithEmailAndPassword global
+      window.firebaseConfig = firebaseConfig;
+
+      window.initFirebase = () => {
+        const app = initializeApp(window.firebaseConfig);
+        window.auth = getAuth(app);
+        window.db = getFirestore(app);
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.collection = collection;
+      };
     </script>
   </head>
   <body>
