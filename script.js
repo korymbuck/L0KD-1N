@@ -1,7 +1,13 @@
 // script.js
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await window.firebaseInit; // Wait for Firebase to be initialized
+  // Wait for a short moment to see if window.auth is available
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  if (!window.auth) {
+    console.error("Firebase Auth object not initialized!");
+    return;
+  }
 
   const auth = window.auth;
   const db = window.db;
@@ -115,6 +121,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   signupButton.addEventListener("click", async () => {
+    if (!window.auth) {
+      console.error("Firebase Auth object not initialized during signup!");
+      return;
+    }
     const email = signupEmailInput.value;
     const password = signupPasswordInput.value;
     try {
@@ -132,6 +142,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   loginButton.addEventListener("click", async () => {
+    if (!window.auth) {
+      console.error("Firebase Auth object not initialized during login!");
+      return;
+    }
     const email = loginEmailInput.value;
     const password = loginPasswordInput.value;
     try {
@@ -149,12 +163,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   logoutButton.addEventListener("click", () => {
-    window.auth.signOut(auth);
+    if (window.auth) {
+      window.auth.signOut(auth);
+    } else {
+      console.error("Firebase Auth object not initialized during logout!");
+    }
   });
 
-  window.auth.onAuthStateChanged(auth, (user) => {
-    updateAuthUI(user);
-  });
+  // Ensure window.auth exists before attaching the listener
+  if (window.auth) {
+    window.auth.onAuthStateChanged(auth, (user) => {
+      updateAuthUI(user);
+    });
+  } else {
+    console.error(
+      "Firebase Auth object not initialized before onAuthStateChanged!"
+    );
+  }
 
   updateDisplay(); // Initial display
 });
