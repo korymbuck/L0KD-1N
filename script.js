@@ -1,34 +1,23 @@
 // script.js
 
-window.addEventListener("load", async () => {
-  // Initialize Firebase
-  window.initFirebase();
-
-  const auth = window.auth;
-  const db = window.db;
-
-  // Get references to HTML elements
-  const pushupsCount = document.getElementById("pushups-count");
-  const squatsCount = document.getElementById("squats-count");
-  const situpsCount = document.getElementById("situps-count");
-  const workoutButtons = document.querySelectorAll(
-    ".workout button[data-increment]"
-  );
-  const allTimePushups = document.getElementById("all-time-pushups");
-  const allTimeSquats = document.getElementById("all-time-squats");
-  const allTimeSitups = document.getElementById("all-time-situps");
-
+document.addEventListener("DOMContentLoaded", () => {
   const authContainer = document.getElementById("auth-container");
-  const signupEmailInput = document.getElementById("signup-email");
-  const signupPasswordInput = document.getElementById("signup-password");
   const signupButton = document.getElementById("signup-button");
-  const loginEmailInput = document.getElementById("login-email");
-  const loginPasswordInput = document.getElementById("login-password");
   const loginButton = document.getElementById("login-button");
   const logoutButton = document.getElementById("logout-button");
   const userInfoDiv = document.getElementById("user-info");
   const authErrorDiv = document.getElementById("auth-error");
   const mainElement = document.querySelector("main");
+
+  const pushupsCount = document.getElementById("pushups-count");
+  const squatsCount = document.getElementById("squats-count");
+  const situpsCount = document.getElementById("situps-count");
+  const allTimePushups = document.getElementById("all-time-pushups");
+  const allTimeSquats = document.getElementById("all-time-squats");
+  const allTimeSitups = document.getElementById("all-time-situps");
+  const workoutButtons = document.querySelectorAll(
+    ".workout button[data-increment]"
+  );
 
   let currentUser = null;
   let workoutData = {
@@ -49,60 +38,24 @@ window.addEventListener("load", async () => {
     allTimeSitups.textContent = workoutData.allTimeSitups;
   }
 
-  function loadWorkoutData(uid) {
-    const workoutDocRef = window.db.doc(db, "users", uid);
-    window.db
-      .getDoc(workoutDocRef)
-      .then((docSnapshot) => {
-        if (docSnapshot.exists()) {
-          workoutData = docSnapshot.data();
-          updateDisplay();
-        } else {
-          console.log(
-            "No workout data found for user:",
-            uid,
-            ". Starting fresh."
-          );
-          workoutData = {
-            pushups: 0,
-            squats: 0,
-            situps: 0,
-            allTimePushups: 0,
-            allTimeSquats: 0,
-            allTimeSitups: 0,
-          };
-          updateDisplay();
-          saveWorkoutData(uid);
-        }
-      })
-      .catch((error) => {
-        console.error("Error loading workout data:", error);
-      });
-  }
-
-  function saveWorkoutData(uid) {
-    if (!uid) {
-      console.error("Cannot save data: User not logged in.");
-      return;
-    }
-    const workoutDocRef = window.db.doc(db, "users", uid);
-    window.db.setDoc(workoutDocRef, workoutData);
-  }
-
-  function updateAuthUI(user) {
-    currentUser = user;
+  function loadWorkoutData(user) {
     if (user) {
-      authContainer.style.display = "none";
-      mainElement.style.display = "block"; // Show workout section
-      logoutButton.style.display = "block";
-      userInfoDiv.style.display = "block";
-      userInfoDiv.textContent = `Logged in as: ${user.email}`;
-      loadWorkoutData(user.uid);
+      const userId = user.id; // Netlify Identity user ID
+      // In a real application, you would fetch user-specific workout data
+      // from a database using this userId. For this example, we'll just
+      // reset the local workout data.
+      workoutData = {
+        pushups: 0,
+        squats: 0,
+        situps: 0,
+        allTimePushups: 0,
+        allTimeSquats: 0,
+        allTimeSitups: 0,
+      };
+      updateDisplay();
+      console.log("Workout data loaded (placeholder) for user:", user);
     } else {
-      authContainer.style.display = "block";
-      mainElement.style.display = "none"; // Hide workout section
-      logoutButton.style.display = "none";
-      userInfoDiv.style.display = "none";
+      // Reset workout data if no user is logged in
       workoutData = {
         pushups: 0,
         squats: 0,
@@ -115,76 +68,66 @@ window.addEventListener("load", async () => {
     }
   }
 
-  signupButton.addEventListener("click", async () => {
-    if (
-      !window.auth ||
-      typeof window.auth.createUserWithEmailAndPassword !== "function"
-    ) {
-      console.error(
-        "Firebase Auth object not fully initialized during signup!"
-      );
-      return;
+  function updateAuthUI(user) {
+    currentUser = user;
+    if (user) {
+      authContainer.style.display = "none";
+      mainElement.style.display = "block";
+      logoutButton.style.display = "block";
+      userInfoDiv.style.display = "block";
+      userInfoDiv.textContent = `Logged in as: ${user.email || "User"}`;
+      loadWorkoutData(user);
+    } else {
+      authContainer.style.display = "block";
+      mainElement.style.display = "none";
+      logoutButton.style.display = "none";
+      userInfoDiv.style.display = "none";
+      loadWorkoutData(null);
     }
-    const email = signupEmailInput.value;
-    const password = signupPasswordInput.value;
-    try {
-      const userCredential = await window.auth.createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      authErrorDiv.textContent = "";
-      console.log("Signup successful:", userCredential.user);
-    } catch (error) {
-      authErrorDiv.textContent = `Sign up failed: ${error.message} (${error.code})`;
-      console.error("Signup error:", error);
-    }
+  }
+
+  window.netlifyIdentity.on("init", (user) => {
+    updateAuthUI(user);
   });
 
-  loginButton.addEventListener("click", async () => {
-    if (
-      !window.auth ||
-      typeof window.auth.signInWithEmailAndPassword !== "function"
-    ) {
-      console.error("Firebase Auth object not fully initialized during login!");
-      return;
-    }
-    const email = loginEmailInput.value;
-    const password = loginPasswordInput.value;
-    try {
-      const userCredential = await window.auth.signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      authErrorDiv.textContent = "";
-      console.log("Login successful:", userCredential.user);
-    } catch (error) {
-      authErrorDiv.textContent = `Login failed: ${error.message} (${error.code})`;
-      console.error("Login error:", error);
-    }
+  window.netlifyIdentity.on("login", (user) => {
+    updateAuthUI(user);
+  });
+
+  window.netlifyIdentity.on("logout", () => {
+    updateAuthUI(null);
+  });
+
+  signupButton.addEventListener("click", () => {
+    window.netlifyIdentity.open("signup");
+  });
+
+  loginButton.addEventListener("click", () => {
+    window.netlifyIdentity.open("login");
   });
 
   logoutButton.addEventListener("click", () => {
-    if (window.auth && typeof window.auth.signOut === "function") {
-      window.auth.signOut(auth);
-    } else {
-      console.error(
-        "Firebase Auth object not fully initialized during logout!"
-      );
-    }
+    window.netlifyIdentity.logout();
   });
 
-  // Attach onAuthStateChanged only if window.auth is available
-  if (window.auth && typeof window.auth.onAuthStateChanged === "function") {
-    window.auth.onAuthStateChanged(auth, (user) => {
-      updateAuthUI(user);
+  workoutButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const increment = parseInt(this.dataset.increment);
+      const workout = this.dataset.workout;
+      workoutData[workout] += increment;
+      workoutData[
+        `allTime${workout.charAt(0).toUpperCase() + workout.slice(1)}`
+      ] += increment;
+      updateDisplay();
+      if (currentUser) {
+        // In a real application, you would save this workout data
+        // to a database associated with the currentUser.id.
+        console.log("Workout data updated for user:", currentUser);
+      } else {
+        alert("Please log in to save your progress.");
+      }
     });
-  } else {
-    console.error(
-      "Firebase Auth object not fully initialized for onAuthStateChanged!"
-    );
-  }
+  });
 
   updateDisplay(); // Initial display
 });

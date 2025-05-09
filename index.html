@@ -11,51 +11,6 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module">
-      // Your Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyDGbbXg4iUI-LAGFNeX79q2UIyDqumx7fc",
-        authDomain: "l0kd-1n.firebaseapp.com",
-        projectId: "l0kd-1n",
-        storageBucket: "l0kd-1n.firebasestorage.app",
-        messagingSenderId: "76980580168",
-        appId: "1:76980580168:web:cef32b7c744d3f5ce90d7d",
-        measurementId: "G-RW34CML9M1",
-      };
-
-      // Import Firebase modules from CDN
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import {
-        getAuth,
-        createUserWithEmailAndPassword,
-        signInWithEmailAndPassword,
-        signOut,
-        onAuthStateChanged,
-      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-      import {
-        getFirestore,
-        doc,
-        setDoc,
-        getDoc,
-        collection,
-      } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-      window.firebaseConfig = firebaseConfig;
-
-      window.initFirebase = () => {
-        const app = initializeApp(window.firebaseConfig);
-        window.auth = getAuth(app);
-        window.db = getFirestore(app);
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.signOut = signOut;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.getDoc = getDoc;
-        window.collection = collection;
-      };
-    </script>
   </head>
   <body>
     <header>
@@ -115,5 +70,6 @@
     </main>
 
     <script src="script.js" type="module"></script>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   </body>
 </html>
