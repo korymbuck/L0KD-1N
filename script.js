@@ -1,8 +1,18 @@
 // script.js
 
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
 document.addEventListener("DOMContentLoaded", () => {
+  const supabaseUrl = "YOUR_SUPABASE_URL"; // Replace with your Supabase URL
+  const supabaseKey = "YOUR_SUPABASE_ANON_KEY"; // Replace with your Supabase Anon Key
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   const authContainer = document.getElementById("auth-container");
+  const signupEmailInput = document.getElementById("signup-email");
+  const signupPasswordInput = document.getElementById("signup-password");
   const signupButton = document.getElementById("signup-button");
+  const loginEmailInput = document.getElementById("login-email");
+  const loginPasswordInput = document.getElementById("login-password");
   const loginButton = document.getElementById("login-button");
   const logoutButton = document.getElementById("logout-button");
   const userInfoDiv = document.getElementById("user-info");
@@ -38,24 +48,32 @@ document.addEventListener("DOMContentLoaded", () => {
     allTimeSitups.textContent = workoutData.allTimeSitups;
   }
 
-  function loadWorkoutData(user) {
-    if (user) {
-      const userId = user.id; // Netlify Identity user ID
-      // In a real application, you would fetch user-specific workout data
-      // from a database using this userId. For this example, we'll just
-      // reset the local workout data.
-      workoutData = {
-        pushups: 0,
-        squats: 0,
-        situps: 0,
-        allTimePushups: 0,
-        allTimeSquats: 0,
-        allTimeSitups: 0,
-      };
-      updateDisplay();
-      console.log("Workout data loaded (placeholder) for user:", user);
+  async function loadWorkoutData(userId) {
+    if (userId) {
+      const { data, error } = await supabase
+        .from("workouts") // Replace 'workouts' with your table name
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error) {
+        console.error("Error loading workout data:", error);
+      } else if (data) {
+        workoutData = data;
+        updateDisplay();
+      } else {
+        workoutData = {
+          pushups: 0,
+          squats: 0,
+          situps: 0,
+          allTimePushups: 0,
+          allTimeSquats: 0,
+          allTimeSitups: 0,
+        };
+        updateDisplay();
+        saveWorkoutData(userId, workoutData);
+      }
     } else {
-      // Reset workout data if no user is logged in
       workoutData = {
         pushups: 0,
         squats: 0,
@@ -65,6 +83,20 @@ document.addEventListener("DOMContentLoaded", () => {
         allTimeSitups: 0,
       };
       updateDisplay();
+    }
+  }
+
+  async function saveWorkoutData(userId, data) {
+    if (userId) {
+      const { error } = await supabase
+        .from("workouts") // Replace 'workouts' with your table name
+        .upsert({ user_id: userId, ...data }, { onConflict: ["user_id"] });
+
+      if (error) {
+        console.error("Error saving workout data:", error);
+      }
+    } else {
+      console.error("Cannot save data: No user logged in.");
     }
   }
 
@@ -75,8 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
       mainElement.style.display = "block";
       logoutButton.style.display = "block";
       userInfoDiv.style.display = "block";
-      userInfoDiv.textContent = `Logged in as: ${user.email || "User"}`;
-      loadWorkoutData(user);
+      userInfoDiv.textContent = `Logged in as: ${user.email}`;
+      loadWorkoutData(user.id);
     } else {
       authContainer.style.display = "block";
       mainElement.style.display = "none";
@@ -86,28 +118,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  window.netlifyIdentity.on("init", (user) => {
-    updateAuthUI(user);
+  signupButton.addEventListener("click", async () => {
+    const email = signupEmailInput.value;
+    const password = signupPasswordInput.value;
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      authErrorDiv.textContent = `Sign up failed: ${error.message}`;
+      console.error("Sign up error:", error);
+    } else {
+      authErrorDiv.textContent =
+        "Sign up successful! Check your email to confirm.";
+      console.log("Sign up successful:", data);
+    }
   });
 
-  window.netlifyIdentity.on("login", (user) => {
-    updateAuthUI(user);
+  loginButton.addEventListener("click", async () => {
+    const email = loginEmailInput.value;
+    const password = loginPasswordInput.value;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      authErrorDiv.textContent = `Login failed: ${error.message}`;
+      console.error("Login error:", error);
+    } else {
+      console.log("Login successful:", data);
+    }
   });
 
-  window.netlifyIdentity.on("logout", () => {
-    updateAuthUI(null);
+  logoutButton.addEventListener("click", async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error:", error);
+    } else {
+      console.log("Logged out");
+    }
   });
 
-  signupButton.addEventListener("click", () => {
-    window.netlifyIdentity.open("signup");
-  });
-
-  loginButton.addEventListener("click", () => {
-    window.netlifyIdentity.open("login");
-  });
-
-  logoutButton.addEventListener("click", () => {
-    window.netlifyIdentity.logout();
+  supabase.auth.onAuthStateChange((event, session) => {
+    updateAuthUI(session?.user);
   });
 
   workoutButtons.forEach((button) => {
@@ -120,13 +170,15 @@ document.addEventListener("DOMContentLoaded", () => {
       ] += increment;
       updateDisplay();
       if (currentUser) {
-        // In a real application, you would save this workout data
-        // to a database associated with the currentUser.id.
-        console.log("Workout data updated for user:", currentUser);
+        saveWorkoutData(currentUser.id, workoutData);
       } else {
         alert("Please log in to save your progress.");
       }
     });
+  });
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    updateAuthUI(session?.user);
   });
 
   updateDisplay(); // Initial display
