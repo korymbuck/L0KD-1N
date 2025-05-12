@@ -114,9 +114,22 @@ span {
 /* Modal Styling */
 #auth-backdrop {
   background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  inset: 0;
+  z-index: 998;
 }
 
 #auth-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Montserrat", sans-serif;
+}
+
+#auth-modal > div {
   background-color: #507687;
   color: #fcfaee;
   border-radius: 1rem;
@@ -124,7 +137,10 @@ span {
   padding: 2rem;
   max-width: 400px;
   width: 90%;
-  font-family: "Montserrat", sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
 }
 
 #auth-modal h2 {
@@ -144,10 +160,25 @@ span {
   font-size: 1rem;
 }
 
+#signup-button {
+  background-color: #b8001f;
+}
+
+#signup-button:hover {
+  background-color: #9a001a;
+}
+
+#login-button {
+  background-color: #1d4ed8;
+}
+
+#login-button:hover {
+  background-color: #1e40af;
+}
+
 #auth-modal button {
   padding: 0.75rem;
   margin-top: 1rem;
-  background: #b8001f;
   color: #fcfaee;
   border: none;
   border-radius: 0.5rem;
@@ -155,10 +186,6 @@ span {
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.3s ease;
-}
-
-#auth-modal button:hover {
-  background-color: #9a001a;
 }
 
 #auth-error {
