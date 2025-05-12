@@ -1,7 +1,8 @@
 // No import needed — using global 'supabase' from CDN
 document.addEventListener("DOMContentLoaded", () => {
   const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co";
-  const supabaseKey = "YOUR-KEY-HERE"; // Replace with env-safe version later
+  const supabaseKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw"; // Replace with env-safe version later
   const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
   const authContainer = document.getElementById("auth-container");
