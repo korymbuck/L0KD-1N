@@ -1,10 +1,10 @@
-import supabase from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import * as supabaseModule from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 document.addEventListener("DOMContentLoaded", () => {
   const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co"; // Replace with your Supabase URL
   const supabaseKey =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw"; // Replace with your Supabase Anon Key
-  const { createClient } = supabase; // Destructure createClient from the supabase object
+  const { createClient } = supabaseModule; // Destructure createClient from the supabaseModule namespace
   const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
   const authContainer = document.getElementById("auth-container");
@@ -31,23 +31,91 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentUser = null;
   let workoutData = {
-    /* ... initial workout data ... */
+    pushups: 0,
+    squats: 0,
+    situps: 0,
+    allTimePushups: 0,
+    allTimeSquats: 0,
+    allTimeSitups: 0,
   };
 
   function updateDisplay() {
-    /* ... your updateDisplay function ... */
+    pushupsCount.textContent = workoutData.pushups;
+    squatsCount.textContent = workoutData.squats;
+    situpsCount.textContent = workoutData.situps;
+    allTimePushups.textContent = workoutData.allTimePushups;
+    allTimeSquats.textContent = workoutData.allTimeSquats;
+    allTimeSitups.textContent = workoutData.allTimeSitups;
   }
 
   async function loadWorkoutData(userId) {
-    /* ... your loadWorkoutData function ... */
+    if (userId) {
+      const { data, error } = await supabaseClient
+        .from("workouts") // Replace 'workouts' with your table name
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error) {
+        console.error("Error loading workout data:", error);
+      } else if (data) {
+        workoutData = data;
+        updateDisplay();
+      } else {
+        workoutData = {
+          pushups: 0,
+          squats: 0,
+          situps: 0,
+          allTimePushups: 0,
+          allTimeSquats: 0,
+          allTimeSitups: 0,
+        };
+        updateDisplay();
+        saveWorkoutData(userId, workoutData);
+      }
+    } else {
+      workoutData = {
+        pushups: 0,
+        squats: 0,
+        situps: 0,
+        allTimePushups: 0,
+        allTimeSquats: 0,
+        allTimeSitups: 0,
+      };
+      updateDisplay();
+    }
   }
 
   async function saveWorkoutData(userId, data) {
-    /* ... your saveWorkoutData function ... */
+    if (userId) {
+      const { error } = await supabaseClient
+        .from("workouts") // Replace 'workouts' with your table name
+        .upsert({ user_id: userId, ...data }, { onConflict: ["user_id"] });
+
+      if (error) {
+        console.error("Error saving workout data:", error);
+      }
+    } else {
+      console.error("Cannot save data: No user logged in.");
+    }
   }
 
   function updateAuthUI(user) {
-    /* ... your updateAuthUI function ... */
+    currentUser = user;
+    if (user) {
+      authContainer.style.display = "none";
+      mainElement.style.display = "block";
+      logoutButton.style.display = "block";
+      userInfoDiv.style.display = "block";
+      userInfoDiv.textContent = `Logged in as: ${user.email}`;
+      loadWorkoutData(user.id);
+    } else {
+      authContainer.style.display = "block";
+      mainElement.style.display = "none";
+      logoutButton.style.display = "none";
+      userInfoDiv.style.display = "none";
+      loadWorkoutData(null);
+    }
   }
 
   signupButton.addEventListener("click", async () => {
@@ -93,7 +161,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   workoutButtons.forEach((button) => {
-    /* ... your workout button logic ... */
+    button.addEventListener("click", function () {
+      const increment = parseInt(this.dataset.increment);
+      const workout = this.dataset.workout;
+      workoutData[workout] += increment;
+      workoutData[
+        `allTime${workout.charAt(0).toUpperCase() + workout.slice(1)}`
+      ] += increment;
+      updateDisplay();
+      if (currentUser) {
+        saveWorkoutData(currentUser.id, workoutData);
+      } else {
+        alert("Please log in to save your progress.");
+      }
+    });
   });
 
   supabaseClient.auth.getSession().then(({ data: { session } }) => {
