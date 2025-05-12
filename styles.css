@@ -1,10 +1,10 @@
-/* styles.css */
+/* styles.css - Updated to match modern dark slate design */
 
 body {
   font-family: "Montserrat", sans-serif;
   margin: 0;
-  background-color: #f5f5dc; /* Cream background */
-  color: #000;
+  background-color: #1e293b; /* dark slate background */
+  color: #f8fafc; /* light text */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,14 +18,14 @@ header {
   width: 90%;
   text-align: center;
   padding-bottom: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #334155;
   margin-bottom: 30px;
 }
 
 header h1 {
   font-size: 2.8em;
   font-weight: 700;
-  color: #000;
+  color: #ffffff;
   margin-bottom: 15px;
 }
 
@@ -38,17 +38,17 @@ main {
 }
 
 .workout {
-  background-color: #f5f5dc; /* Cream background */
+  background-color: #334155;
   padding: 25px;
   margin-bottom: 25px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
 }
 
 .workout h2 {
   font-size: 1.8em;
-  color: #333;
+  color: #f8fafc;
   margin-top: 0;
   margin-bottom: 20px;
   text-align: center;
@@ -64,27 +64,28 @@ main {
 
 .controls button {
   padding: 12px 20px;
-  border: 1px solid #ccc;
-  background-color: #eee; /* Light background for buttons */
-  color: #333;
+  border: 1px solid #475569;
+  background-color: #1e40af;
+  color: #f1f5f9;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.2em;
   flex-grow: 1;
   text-align: center;
   font-weight: 700;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 .controls button:hover {
-  background-color: #ddd;
+  background-color: #2563eb;
 }
 
 .all-time-stats {
-  background-color: #f5f5dc; /* Cream background */
+  background-color: #334155;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin-top: 30px;
   text-align: center;
   width: 100%;
@@ -93,83 +94,82 @@ main {
 .all-time-stats h2 {
   font-size: 1.5em;
   font-weight: 700;
-  color: #555;
+  color: #f1f5f9;
   margin-top: 0;
   margin-bottom: 20px;
 }
 
 .all-time-stats p {
-  color: #444;
+  color: #cbd5e1;
   margin-bottom: 10px;
   font-size: 1.2em;
 }
 
 span {
   font-weight: 700;
-  color: #000;
+  color: #ffffff;
   font-size: 1.4em;
 }
 
-/* Media query for screens with a maximum width of 600 pixels (typical for phones) */
 @media (max-width: 600px) {
   body {
-    font-size: 18px; /* Slightly smaller base font */
-    padding: 15px; /* Less padding around the edges */
+    font-size: 18px;
+    padding: 15px;
   }
 
   header {
-    padding-bottom: 15px; /* Less padding below header */
-    margin-bottom: 20px; /* Less margin below header */
+    padding-bottom: 15px;
+    margin-bottom: 20px;
   }
 
   header h1 {
-    font-size: 2.2em; /* Slightly smaller title */
-    margin-bottom: 10px; /* Less margin below title */
+    font-size: 2.2em;
+    margin-bottom: 10px;
   }
 
   main {
-    width: 95%; /* Use more of the screen width */
+    width: 95%;
   }
 
   .workout {
-    padding: 15px; /* Less padding inside workout sections */
-    margin-bottom: 15px; /* Less margin below workout sections */
-    border-radius: 6px; /* Slightly less rounded corners */
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
   }
 
   .workout h2 {
-    font-size: 1.6em; /* Smaller heading */
-    margin-bottom: 15px; /* Less margin below heading */
+    font-size: 1.6em;
+    margin-bottom: 15px;
   }
 
   .controls {
-    gap: 10px; /* Less spacing between buttons */
-    margin-top: 10px; /* Less margin above buttons */
+    gap: 10px;
+    margin-top: 10px;
   }
 
   .controls button {
-    font-size: 1.1em; /* Smaller button text */
-    padding: 10px 15px; /* Smaller buttons */
-    border-radius: 5px; /* Less rounded buttons */
+    font-size: 1.1em;
+    padding: 10px 15px;
+    border-radius: 5px;
   }
 
   .all-time-stats {
-    padding: 15px; /* Less padding */
-    border-radius: 6px; /* Slightly less rounded corners */
-    margin-top: 20px; /* Less margin above all-time stats */
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 20px;
   }
 
   .all-time-stats h2 {
-    font-size: 1.4em; /* Smaller heading */
-    margin-bottom: 15px; /* Less margin */
+    font-size: 1.4em;
+    margin-bottom: 15px;
   }
 
   .all-time-stats p {
-    font-size: 1.1em; /* Smaller text */
-    margin-bottom: 8px; /* Less margin */
+    font-size: 1.1em;
+    margin-bottom: 8px;
   }
 
   span {
-    font-size: 1.3em; /* Smaller count text */
+    font-size: 1.3em;
   }
 }
