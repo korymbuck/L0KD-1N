@@ -3,8 +3,9 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const supabaseUrl = "YOUR_SUPABASE_URL"; // Replace with your Supabase URL
-  const supabaseKey = "YOUR_SUPABASE_ANON_KEY"; // Replace with your Supabase Anon Key
+  const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co"; // Replace with your Supabase URL
+  const supabaseKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw"; // Replace with your Supabase Anon Key
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   const authContainer = document.getElementById("auth-container");
