@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co"; // Replace with your Supabase URL
   const supabaseKey =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw"; // Replace with your Supabase Anon Key
-  const { createClient } = supabaseModule; // Destructure createClient from the supabaseModule namespace
+  const { createClient } = supabaseModule;
   const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
   const authContainer = document.getElementById("auth-container");
