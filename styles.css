@@ -1,10 +1,10 @@
-/* styles.css - Updated to match modern dark slate design */
+/* styles.css - Updated to match modern dark slate design with orange highlights */
 
 body {
   font-family: "Montserrat", sans-serif;
   margin: 0;
-  background-color: #1e293b; /* dark slate background */
-  color: #f8fafc; /* light text */
+  background-color: #1e293b;
+  color: #f8fafc;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,7 +25,7 @@ header {
 header h1 {
   font-size: 2.8em;
   font-weight: 700;
-  color: #ffffff;
+  color: #f97316;
   margin-bottom: 15px;
 }
 
@@ -79,6 +79,15 @@ main {
 
 .controls button:hover {
   background-color: #2563eb;
+}
+
+.controls button[data-increment="25"] {
+  background-color: #f97316;
+  border: 1px solid #fb923c;
+}
+
+.controls button[data-increment="25"]:hover {
+  background-color: #ea580c;
 }
 
 .all-time-stats {
