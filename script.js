@@ -105,22 +105,28 @@ function resetWorkoutStats() {
 
 const userBar = document.getElementById("user-bar");
 
-if (user) {
-  hideAuthModal();
-  userBar.style.display = "flex";
+async function updateUIState(user) {
+  if (user) {
+    hideAuthModal();
+    userBar.style.display = "flex";
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username")
-    .eq("id", user.id)
-    .single();
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", user.id)
+        .single();
 
-  userInfoDiv.textContent = profile?.username || user.email;
-  loadWorkoutStats(user.id);
-} else {
-  userBar.style.display = "none";
-  userInfoDiv.textContent = "";
-  resetWorkoutStats();
+      userInfoDiv.textContent = profile?.username || user.email;
+      loadWorkoutStats(user.id);
+    } catch (err) {
+      console.error("Failed to load user profile:", err);
+    }
+  } else {
+    userBar.style.display = "none";
+    userInfoDiv.textContent = "";
+    resetWorkoutStats();
+  }
 }
 
 async function loadWorkoutStats(userId) {
