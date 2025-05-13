@@ -55,20 +55,29 @@
       </section>
 
       <div
-        id="user-info"
+        id="user-bar"
         style="
-          display: none;
+          display: flex;
+          gap: 1rem;
+          align-items: center;
           margin-top: -10px;
-          color: #fcfaee;
-          font-weight: 600;
-          background: rgba(0, 0, 0, 0.3);
-          padding: 0.3rem 0.6rem;
-          border-radius: 6px;
-          text-align: left;
+          margin-bottom: 10px;
         "
-      ></div>
+      >
+        <div
+          id="user-info"
+          style="
+            display: none;
+            color: #fcfaee;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+          "
+        ></div>
 
-      <button id="logout-button" style="display: none">Logout</button>
+        <button id="logout-button" style="display: none">Logout</button>
+      </div>
     </main>
 
     <!-- AUTH BACKDROP -->
