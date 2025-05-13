@@ -58,7 +58,48 @@
     </main>
 
     <!-- AUTH MODAL OVERLAY -->
-    <!-- Auth Backdrop -->
+    <div
+      id="auth-backdrop"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 998;
+      "
+    ></div>
+
+    <!-- AUTH MODAL -->
+    <div
+      id="auth-modal"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div>
+        <h2 id="auth-title">Login</h2>
+
+        <input type="email" id="login-email" placeholder="Email" />
+        <input type="password" id="login-password" placeholder="Password" />
+        <button id="login-button">Login</button>
+
+        <div id="signup-fields" style="display: none">
+          <input type="text" id="signup-username" placeholder="Username" />
+          <input type="email" id="signup-email" placeholder="Email" />
+          <input type="password" id="signup-password" placeholder="Password" />
+          <button id="signup-button">Sign Up</button>
+        </div>
+
+        <div id="auth-toggle">New user? Sign up here</div>
+        <div id="auth-error"></div>
+      </div>
+    </div>
+
     <!-- AUTH BACKDROP -->
     <div
       id="auth-backdrop"
