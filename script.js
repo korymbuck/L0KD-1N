@@ -240,17 +240,23 @@ supabase.auth.getSession().then(({ data: { session } }) => {
 const authToggle = document.getElementById("auth-toggle");
 const authTitle = document.getElementById("auth-title");
 const signupFields = document.getElementById("signup-fields");
+const loginInputs = loginEmailInput.parentElement;
+
 let showingSignup = false;
 
 authToggle.addEventListener("click", () => {
   showingSignup = !showingSignup;
   if (showingSignup) {
     signupFields.style.display = "block";
+    loginEmailInput.style.display = "none";
+    loginPasswordInput.style.display = "none";
     loginButton.style.display = "none";
     authTitle.textContent = "Sign Up";
     authToggle.textContent = "Already have an account? Log in here";
   } else {
     signupFields.style.display = "none";
+    loginEmailInput.style.display = "block";
+    loginPasswordInput.style.display = "block";
     loginButton.style.display = "block";
     authTitle.textContent = "Login";
     authToggle.textContent = "New user? Sign up here";
