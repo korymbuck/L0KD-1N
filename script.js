@@ -109,24 +109,17 @@ async function updateUIState(user) {
     logoutButton.style.display = "block";
     userInfoDiv.style.display = "block";
 
-    try {
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("username")
-        .eq("id", user.id)
-        .single();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .single();
 
-      if (error) throw error;
+    userInfoDiv.textContent = profile?.username || user.email;
 
-      userInfoDiv.textContent = `Logged in as: ${
-        profile?.username || user.email
-      }`;
-    } catch (err) {
-      console.error("Failed to load profile username:", err);
-      userInfoDiv.textContent = `Logged in as: ${user.email}`;
-    }
+    // Load workout stats
+    loadWorkoutStats(user.id);
   } else {
-    showAuthModal();
     logoutButton.style.display = "none";
     userInfoDiv.style.display = "none";
     userInfoDiv.textContent = "";
