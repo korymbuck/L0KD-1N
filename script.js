@@ -115,9 +115,7 @@ async function updateUIState(user) {
       .eq("id", user.id)
       .single();
 
-    userInfoDiv.textContent = `Logged in as: ${
-      profile?.username || user.email
-    }`;
+    userInfoDiv.textContent = `Logged in as: ${profile?.username || user.email}`;
   } else {
     showAuthModal();
     logoutButton.style.display = "none";
@@ -125,7 +123,6 @@ async function updateUIState(user) {
     userInfoDiv.textContent = "";
     resetWorkoutStats();
   }
-}
 
 async function loadWorkoutStats(userId) {
   try {
