@@ -26,6 +26,26 @@ const allTimeSquats = document.getElementById("all-time-squats");
 const allTimeSitups = document.getElementById("all-time-situps");
 const workoutButtons = document.querySelectorAll(".workout button");
 
+// Style logout button
+logoutButton.style.backgroundColor = "#B8001F";
+logoutButton.style.color = "#FCFAEE";
+logoutButton.style.border = "none";
+logoutButton.style.padding = "10px 20px";
+logoutButton.style.borderRadius = "8px";
+logoutButton.style.fontWeight = "700";
+logoutButton.style.fontSize = "1rem";
+logoutButton.style.cursor = "pointer";
+logoutButton.style.position = "absolute";
+logoutButton.style.top = "20px";
+logoutButton.style.right = "20px";
+logoutButton.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)";
+logoutButton.addEventListener("mouseover", () => {
+  logoutButton.style.backgroundColor = "#9a001a";
+});
+logoutButton.addEventListener("mouseout", () => {
+  logoutButton.style.backgroundColor = "#B8001F";
+});
+
 let currentUser = null;
 let workoutStats = {
   pushups: 0,
@@ -208,6 +228,9 @@ signupButton.addEventListener("click", async () => {
 });
 
 logoutButton.addEventListener("click", async () => {
+  const confirmed = confirm("Are you sure you want to log out?");
+  if (!confirmed) return;
+
   try {
     await supabase.auth.signOut();
     currentUser = null;
