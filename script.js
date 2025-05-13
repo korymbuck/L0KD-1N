@@ -103,13 +103,21 @@ function resetWorkoutStats() {
   updateWorkoutDisplay();
 }
 
-function updateUIState(user) {
+async function updateUIState(user) {
   if (user) {
     hideAuthModal();
     logoutButton.style.display = "block";
     userInfoDiv.style.display = "block";
-    userInfoDiv.textContent = `Logged in as: ${user.email}`;
-    loadWorkoutStats(user.id);
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .single();
+
+    userInfoDiv.textContent = `Logged in as: ${
+      profile?.username || user.email
+    }`;
   } else {
     showAuthModal();
     logoutButton.style.display = "none";
