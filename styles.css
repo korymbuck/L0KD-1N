@@ -109,12 +109,12 @@ span {
 }
 
 #auth-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   inset: 0;
   z-index: 999;
-  display: flex; /* enable flex */
-  justify-content: center; /* center horizontally */
-  align-items: center; /* center vertically */
 }
 
 #auth-modal h2 {
@@ -151,9 +151,10 @@ span {
 
 #auth-toggle {
   margin-top: 1rem;
-  color: var(--secondary);
+  color: var(--accent);
   cursor: pointer;
   font-weight: 600;
+  text-decoration: underline;
 }
 
 #auth-error {
@@ -161,6 +162,22 @@ span {
   margin-top: 0.5rem;
   text-align: center;
   font-size: 0.9em;
+}
+
+#auth-modal > div {
+  background-color: var(--primary);
+  color: var(--text);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  line-height: 1.6;
 }
 
 @media (max-width: 600px) {
