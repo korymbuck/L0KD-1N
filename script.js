@@ -293,6 +293,7 @@ supabase.auth.getSession().then(({ data: { session } }) => {
     currentUser = session.user;
     updateUIState(currentUser);
   } else {
+    showAuthModal(); // 👈 add this
     updateUIState(null);
   }
 });
