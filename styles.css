@@ -3,7 +3,7 @@
 :root {
   --text: #ffffff;
   --background: #736867;
-  --primary: #e3ded3;
+  --primary: #c8bfb7;
   --secondary: #000000;
   --accent: #d6603c;
 }
@@ -45,22 +45,26 @@ main {
   align-items: center;
 }
 
-.workout {
+.workout,
+.all-time-stats {
   background-color: var(--primary);
-  padding: 25px;
-  margin-bottom: 25px;
+  padding: 1.25rem;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   width: 100%;
+  line-height: 1.6;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-.workout h2 {
+.workout h2,
+.all-time-stats h2 {
   font-size: 1.8em;
   color: var(--secondary);
   margin-top: 0;
   margin-bottom: 20px;
   text-align: center;
   font-weight: 700;
+  text-shadow: none;
 }
 
 .controls {
@@ -83,34 +87,24 @@ main {
   font-weight: 700;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .controls button:hover {
   background-color: #c44c2b;
 }
 
-.all-time-stats {
-  background-color: var(--primary);
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  margin-top: 30px;
-  text-align: center;
-  width: 100%;
-}
-
-.all-time-stats h2 {
-  font-size: 1.5em;
-  font-weight: 700;
-  color: var(--secondary);
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
 .all-time-stats p {
   color: var(--secondary);
   margin-bottom: 10px;
   font-size: 1.2em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+span {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 1.4em;
 }
 
 #auth-modal {
@@ -150,6 +144,7 @@ main {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 #auth-modal button:hover {
@@ -168,12 +163,6 @@ main {
   margin-top: 0.5rem;
   text-align: center;
   font-size: 0.9em;
-}
-
-span {
-  font-weight: 700;
-  color: var(--text);
-  font-size: 1.4em;
 }
 
 @media (max-width: 600px) {
