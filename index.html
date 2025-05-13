@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>L0KD-1N</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
   <body>
     <header>
@@ -18,7 +13,6 @@
     </header>
 
     <main>
-      <!-- Workout Sections -->
       <section class="workout">
         <h2>Push-ups: <span id="pushups-count">0</span></h2>
         <div class="controls">
@@ -53,52 +47,9 @@
         <p>Total Sit-ups: <span id="all-time-situps">0</span></p>
       </section>
 
-      <button id="logout-button" style="display: none">Logout</button>
       <div id="user-info" style="display: none"></div>
+      <button id="logout-button" style="display: none">Logout</button>
     </main>
-
-    <!-- AUTH MODAL OVERLAY -->
-    <div
-      id="auth-backdrop"
-      style="
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 998;
-      "
-    ></div>
-
-    <!-- AUTH MODAL -->
-    <div
-      id="auth-modal"
-      style="
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 999;
-        justify-content: center;
-        align-items: center;
-      "
-    >
-      <div>
-        <h2 id="auth-title">Login</h2>
-
-        <input type="email" id="login-email" placeholder="Email" />
-        <input type="password" id="login-password" placeholder="Password" />
-        <button id="login-button">Login</button>
-
-        <div id="signup-fields" style="display: none">
-          <input type="text" id="signup-username" placeholder="Username" />
-          <input type="email" id="signup-email" placeholder="Email" />
-          <input type="password" id="signup-password" placeholder="Password" />
-          <button id="signup-button">Sign Up</button>
-        </div>
-
-        <div id="auth-toggle">New user? Sign up here</div>
-        <div id="auth-error"></div>
-      </div>
-    </div>
 
     <!-- AUTH BACKDROP -->
     <div
@@ -143,8 +94,6 @@
       </div>
     </div>
 
-    <!-- Supabase + App Script -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
+    <script src="script.js" type="module"></script>
   </body>
 </html>
