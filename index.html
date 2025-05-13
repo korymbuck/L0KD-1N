@@ -84,21 +84,19 @@
       "
     >
       <div>
-        <h2>Login</h2>
+        <h2 id="auth-title">Login</h2>
+
         <input type="email" id="login-email" placeholder="Email" />
         <input type="password" id="login-password" placeholder="Password" />
         <button id="login-button">Login</button>
 
-        <div id="signup-link">
-          New user?
-          <a
-            href="#"
-            style="color: #fcfaee; text-decoration: underline"
-            onclick="alert('Sign up coming soon!')"
-            >Sign up here</a
-          >
+        <div id="signup-fields" style="display: none">
+          <input type="email" id="signup-email" placeholder="Email" />
+          <input type="password" id="signup-password" placeholder="Password" />
+          <button id="signup-button">Sign Up</button>
         </div>
 
+        <div id="auth-toggle">New user? Sign up here</div>
         <div id="auth-error"></div>
       </div>
     </div>

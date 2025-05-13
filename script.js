@@ -1,20 +1,21 @@
-// script.js
-// Full workout tracking + modal login integration
+// script.js — login/signup toggle with Supabase and workout tracking
 
 const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co";
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw";
+const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+const loginEmailInput = document.getElementById("login-email");
+const loginPasswordInput = document.getElementById("login-password");
+const loginButton = document.getElementById("login-button");
 
 const signupEmailInput = document.getElementById("signup-email");
 const signupPasswordInput = document.getElementById("signup-password");
 const signupButton = document.getElementById("signup-button");
-const loginEmailInput = document.getElementById("login-email");
-const loginPasswordInput = document.getElementById("login-password");
-const loginButton = document.getElementById("login-button");
+
+const authErrorDiv = document.getElementById("auth-error");
 const logoutButton = document.getElementById("logout-button");
 const userInfoDiv = document.getElementById("user-info");
-const authErrorDiv = document.getElementById("auth-error");
+const authContainer = document.getElementById("auth-modal");
 
 const pushupsCount = document.getElementById("pushups-count");
 const squatsCount = document.getElementById("squats-count");
@@ -71,7 +72,7 @@ function updateUIState(user) {
     logoutButton.style.display = "block";
     userInfoDiv.style.display = "block";
     userInfoDiv.textContent = `Logged in as: ${user.email}`;
-    checkAndResetDailyStats(user.id);
+    loadWorkoutStats(user.id);
   } else {
     showAuthModal();
     logoutButton.style.display = "none";
@@ -81,8 +82,7 @@ function updateUIState(user) {
   }
 }
 
-async function checkAndResetDailyStats(userId) {
-  const today = new Date().toISOString().split("T")[0];
+async function loadWorkoutStats(userId) {
   try {
     const { data, error } = await supabase
       .from("workout_stats")
@@ -93,21 +93,6 @@ async function checkAndResetDailyStats(userId) {
     if (error && error.code !== "PGRST116") throw error;
 
     if (data) {
-      const lastReset = data.last_reset_date;
-      if (lastReset !== today) {
-        await supabase
-          .from("workout_stats")
-          .update({
-            daily_pushups: 0,
-            daily_squats: 0,
-            daily_situps: 0,
-            last_reset_date: today,
-          })
-          .eq("user_id", userId);
-        data.daily_pushups = 0;
-        data.daily_squats = 0;
-        data.daily_situps = 0;
-      }
       workoutStats = {
         pushups: data.daily_pushups || 0,
         squats: data.daily_squats || 0,
@@ -125,18 +110,19 @@ async function checkAndResetDailyStats(userId) {
         total_pushups: 0,
         total_squats: 0,
         total_situps: 0,
-        last_reset_date: today,
       });
     }
+
     updateWorkoutDisplay();
   } catch (err) {
-    console.error("Error loading/resetting stats:", err);
-    authErrorDiv.textContent = "Error loading/resetting workout stats";
+    console.error("Error loading workout stats:", err);
+    authErrorDiv.textContent = "Error loading workout stats";
   }
 }
 
 async function saveWorkoutStats(userId) {
   if (!userId) return;
+
   try {
     const { error } = await supabase.from("workout_stats").upsert(
       {
@@ -147,13 +133,14 @@ async function saveWorkoutStats(userId) {
         total_pushups: workoutStats.totalPushups,
         total_squats: workoutStats.totalSquats,
         total_situps: workoutStats.totalSitups,
-        last_reset_date: new Date().toISOString().split("T")[0],
       },
       { onConflict: "user_id" }
     );
+
     if (error) throw error;
   } catch (err) {
     console.error("Error saving workout stats:", err);
+    authErrorDiv.textContent = "Error saving workout stats";
   }
 }
 
@@ -163,8 +150,10 @@ workoutButtons.forEach((button) => {
       authErrorDiv.textContent = "Please log in to track workouts";
       return;
     }
+
     const increment = parseInt(button.dataset.increment);
     const workout = button.dataset.workout;
+
     switch (workout) {
       case "pushups":
         workoutStats.pushups += increment;
@@ -179,66 +168,51 @@ workoutButtons.forEach((button) => {
         workoutStats.totalSitups += increment;
         break;
     }
+
     updateWorkoutDisplay();
     await saveWorkoutStats(currentUser.id);
   });
-});
-
-signupButton.addEventListener("click", async () => {
-  const email = signupEmailInput.value.trim();
-  const password = signupPasswordInput.value.trim();
-  authErrorDiv.textContent = "";
-  if (!email || !password) {
-    authErrorDiv.textContent = "Email and password are required.";
-    return;
-  }
-  try {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      authErrorDiv.textContent = error.message;
-    } else {
-      authErrorDiv.textContent =
-        "Signup successful! Please confirm your email.";
-    }
-  } catch (err) {
-    authErrorDiv.textContent = "Unexpected error during signup.";
-    console.error(err);
-  }
 });
 
 loginButton.addEventListener("click", async () => {
   const email = loginEmailInput.value.trim();
   const password = loginPasswordInput.value.trim();
   authErrorDiv.textContent = "";
-  if (!email || !password) {
-    authErrorDiv.textContent = "Email and password are required.";
-    return;
-  }
+
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) {
-      authErrorDiv.textContent = error.message;
-    } else {
-      currentUser = data.user;
-      updateUIState(currentUser);
-    }
+    if (error) throw error;
+    currentUser = data.user;
+    updateUIState(currentUser);
   } catch (err) {
-    authErrorDiv.textContent = "Unexpected error during login.";
-    console.error(err);
+    authErrorDiv.textContent = err.message || "Login failed";
+  }
+});
+
+signupButton.addEventListener("click", async () => {
+  const email = signupEmailInput.value.trim();
+  const password = signupPasswordInput.value.trim();
+  authErrorDiv.textContent = "";
+
+  try {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    authErrorDiv.textContent = "Signup successful! Please check your email.";
+  } catch (err) {
+    authErrorDiv.textContent = err.message || "Signup failed";
   }
 });
 
 logoutButton.addEventListener("click", async () => {
   try {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Logout error:", error);
+    await supabase.auth.signOut();
     currentUser = null;
     updateUIState(null);
   } catch (err) {
-    console.error("Unexpected logout error:", err);
+    console.error("Logout error:", err);
   }
 });
 
@@ -258,5 +232,26 @@ supabase.auth.getSession().then(({ data: { session } }) => {
     updateUIState(currentUser);
   } else {
     updateUIState(null);
+  }
+});
+
+// Toggle between login and signup
+const authToggle = document.getElementById("auth-toggle");
+const authTitle = document.getElementById("auth-title");
+const signupFields = document.getElementById("signup-fields");
+let showingSignup = false;
+
+authToggle.addEventListener("click", () => {
+  showingSignup = !showingSignup;
+  if (showingSignup) {
+    signupFields.style.display = "block";
+    loginButton.style.display = "none";
+    authTitle.textContent = "Sign Up";
+    authToggle.textContent = "Already have an account? Log in here";
+  } else {
+    signupFields.style.display = "none";
+    loginButton.style.display = "block";
+    authTitle.textContent = "Login";
+    authToggle.textContent = "New user? Sign up here";
   }
 });

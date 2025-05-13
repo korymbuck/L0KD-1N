@@ -1,4 +1,4 @@
-/* styles.css - Custom brand palette applied + modal login styling + single login mode */
+/* styles.css - Custom brand palette applied + modal login/signup toggle styling */
 
 body {
   font-family: "Montserrat", sans-serif;
@@ -168,6 +168,14 @@ span {
   background-color: #1e40af;
 }
 
+#signup-button {
+  background-color: #b8001f;
+}
+
+#signup-button:hover {
+  background-color: #9a001a;
+}
+
 #auth-modal button {
   padding: 0.75rem;
   margin-top: 1rem;
@@ -188,15 +196,16 @@ span {
   text-align: center;
 }
 
-#signup-link {
+#auth-toggle {
+  margin-top: 0.5rem;
   font-size: 0.95rem;
   color: #fcfaee;
-  margin-top: 0.5rem;
-  cursor: pointer;
   text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-#signup-link:hover {
+#auth-toggle:hover {
   color: #ffcccb;
 }
 
