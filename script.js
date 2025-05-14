@@ -138,16 +138,35 @@ async function loadWorkoutStats(userId) {
 
     if (error && error.code !== "PGRST116") throw error;
 
+    const today = new Date().toISOString().split("T")[0];
+
     if (data) {
+      const lastDate = data.last_updated?.split("T")[0]; // ignore timestamp
+      const isNewDay = lastDate !== today;
+
       workoutStats = {
-        pushups: data.daily_pushups || 0,
-        squats: data.daily_squats || 0,
-        situps: data.daily_situps || 0,
+        pushups: isNewDay ? 0 : data.daily_pushups || 0,
+        squats: isNewDay ? 0 : data.daily_squats || 0,
+        situps: isNewDay ? 0 : data.daily_situps || 0,
         totalPushups: data.total_pushups || 0,
         totalSquats: data.total_squats || 0,
         totalSitups: data.total_situps || 0,
       };
+
+      // If it's a new day, reset daily stats in DB too
+      if (isNewDay) {
+        await supabase
+          .from("workout_stats")
+          .update({
+            daily_pushups: 0,
+            daily_squats: 0,
+            daily_situps: 0,
+            last_updated: today,
+          })
+          .eq("user_id", userId);
+      }
     } else {
+      // New user record
       await supabase.from("workout_stats").insert({
         user_id: userId,
         daily_pushups: 0,
@@ -156,6 +175,7 @@ async function loadWorkoutStats(userId) {
         total_pushups: 0,
         total_squats: 0,
         total_situps: 0,
+        last_updated: today,
       });
     }
 
