@@ -197,12 +197,10 @@ span {
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 1rem;
   transition: background-color 0.3s ease;
 }
-
 #logout-button:hover {
-  background-color: #b3a89f; /* slightly darker shade of --primary */
+  background-color: #b3a89f;
 }
 
 @media (max-width: 600px) {
