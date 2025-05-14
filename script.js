@@ -15,6 +15,7 @@ const signupUsernameInput = document.getElementById("signup-username");
 const signupButton = document.getElementById("signup-button");
 
 const authErrorDiv = document.getElementById("auth-error");
+const userBar = document.getElementById("user-bar");
 const logoutButton = document.getElementById("logout-button");
 const userInfoDiv = document.getElementById("user-info");
 const authContainer = document.getElementById("auth-modal");
@@ -102,8 +103,6 @@ function resetWorkoutStats() {
   };
   updateWorkoutDisplay();
 }
-
-const userBar = document.getElementById("user-bar");
 
 async function updateUIState(user) {
   if (user) {
