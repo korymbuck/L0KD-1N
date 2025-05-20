@@ -37,9 +37,6 @@ logoutButton.style.borderRadius = "8px";
 logoutButton.style.fontWeight = "700";
 logoutButton.style.fontSize = "1rem";
 logoutButton.style.cursor = "pointer";
-logoutButton.style.position = "absolute";
-logoutButton.style.top = "20px";
-logoutButton.style.right = "20px";
 logoutButton.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.15)";
 logoutButton.addEventListener("mouseover", () => {
   logoutButton.style.backgroundColor = "#9a001a";
@@ -107,7 +104,7 @@ function resetWorkoutStats() {
 async function updateUIState(user) {
   if (user) {
     hideAuthModal();
-    userBar.style.display = "flex";
+    userBar.style.display = "flex"; // This will now correctly target the user-bar
 
     try {
       const { data: profile } = await supabase
@@ -116,15 +113,21 @@ async function updateUIState(user) {
         .eq("id", user.id)
         .single();
 
-      userInfoDiv.textContent = profile?.username || user.email;
+      // Ensure userInfoDiv is correctly populated
+      userInfoDiv.textContent = `Logged in as: ${
+        profile?.username || user.email
+      }`;
       loadWorkoutStats(user.id);
     } catch (err) {
       console.error("Failed to load user profile:", err);
+      // Fallback if profile fetch fails but user exists
+      userInfoDiv.textContent = `Logged in as: ${user.email}`;
     }
   } else {
     userBar.style.display = "none";
     userInfoDiv.textContent = "";
     resetWorkoutStats();
+    // showAuthModal(); // Consider if you always want to show modal on logout/initial load without session
   }
 }
 
