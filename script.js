@@ -139,13 +139,20 @@ async function loadWorkoutStats(userId) {
       .eq("user_id", userId)
       .single();
 
+    // PGRST116: no rows found, not an error for .single() if we handle it (data will be null)
     if (error && error.code !== "PGRST116") throw error;
 
-    const today = new Date().toISOString().split("T")[0];
+    const now = new Date(); // Current date/time in local timezone
+    const todayLocalDate = getLocalDateString(now);
 
     if (data) {
-      const lastDate = data.last_updated?.split("T")[0]; // ignore timestamp
-      const isNewDay = lastDate !== today;
+      // Assuming data.last_updated is an ISO string from Supabase (stored as TIMESTAMPTZ)
+      const lastUpdatedDateObj = data.last_updated
+        ? new Date(data.last_updated)
+        : null;
+      const lastLocalDate = getLocalDateString(lastUpdatedDateObj);
+
+      const isNewDay = lastLocalDate !== todayLocalDate;
 
       workoutStats = {
         pushups: isNewDay ? 0 : data.daily_pushups || 0,
@@ -156,36 +163,57 @@ async function loadWorkoutStats(userId) {
         totalSitups: data.total_situps || 0,
       };
 
-      // If it's a new day, reset daily stats in DB too
       if (isNewDay) {
-        await supabase
+        const { error: updateError } = await supabase
           .from("workout_stats")
           .update({
             daily_pushups: 0,
             daily_squats: 0,
             daily_situps: 0,
-            last_updated: today,
+            last_updated: now.toISOString(), // Store current timestamp (UTC)
           })
           .eq("user_id", userId);
+        if (updateError) {
+          console.error("Error updating daily stats for new day:", updateError);
+          if (authErrorDiv)
+            authErrorDiv.textContent = "Error resetting daily stats.";
+        }
       }
     } else {
-      // New user record
-      await supabase.from("workout_stats").insert({
-        user_id: userId,
-        daily_pushups: 0,
-        daily_squats: 0,
-        daily_situps: 0,
-        total_pushups: 0,
-        total_squats: 0,
-        total_situps: 0,
-        last_updated: today,
-      });
+      // No data found, implies new user for workout_stats table
+      // Reset local workoutStats for this new user context
+      workoutStats = {
+        pushups: 0,
+        squats: 0,
+        situps: 0,
+        totalPushups: 0,
+        totalSquats: 0,
+        totalSitups: 0,
+      };
+      // Insert new record for the user
+      const { error: insertError } = await supabase
+        .from("workout_stats")
+        .insert({
+          user_id: userId,
+          daily_pushups: 0,
+          daily_squats: 0,
+          daily_situps: 0,
+          total_pushups: 0,
+          total_squats: 0,
+          total_situps: 0,
+          last_updated: now.toISOString(), // Store current timestamp (UTC)
+        });
+      if (insertError) {
+        console.error("Error inserting new workout stats record:", insertError);
+        if (authErrorDiv)
+          authErrorDiv.textContent = "Error initializing workout stats.";
+      }
     }
 
     updateWorkoutDisplay();
   } catch (err) {
     console.error("Error loading workout stats:", err);
-    authErrorDiv.textContent = "Error loading workout stats";
+    if (authErrorDiv) authErrorDiv.textContent = "Error loading workout stats";
   }
 }
 
@@ -201,13 +229,14 @@ async function saveWorkoutStats(userId) {
         total_pushups: workoutStats.totalPushups,
         total_squats: workoutStats.totalSquats,
         total_situps: workoutStats.totalSitups,
+        last_updated: new Date().toISOString(), // Update last_updated on every save
       },
       { onConflict: "user_id" }
     );
     if (error) throw error;
   } catch (err) {
     console.error("Error saving workout stats:", err);
-    authErrorDiv.textContent = "Error saving workout stats";
+    if (authErrorDiv) authErrorDiv.textContent = "Error saving workout stats";
   }
 }
 
