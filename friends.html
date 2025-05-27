@@ -6,8 +6,7 @@
     <title>Friends Leaderboard</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="styles-friends.css" />
-
-    <link rel="stylesheet" href="styles.css" />
+    <!-- Removed duplicate styles.css link -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
   <body>
@@ -23,15 +22,30 @@
     </header>
 
     <main>
+      <section class="add-friend-section">
+        <h2>Add Friend</h2>
+        <input
+          type="text"
+          id="add-friend-input"
+          placeholder="Enter friend's username"
+        />
+        <button id="add-friend-button">Add Friend</button>
+        <div id="friend-error"></div>
+      </section>
+
       <section class="leaderboard">
         <h2>LEADERBOARD</h2>
-        <div id="friends-list"></div>
+        <div id="friends-list">
+          <!-- Friends will be loaded here by JavaScript -->
+        </div>
       </section>
     </main>
 
     <script type="module">
       const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co";
-      const supabaseKey = "YOUR_SUPABASE_ANON_KEY";
+      // Use the correct Supabase Key from your script.js
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw";
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
       const addFriendInput = document.getElementById("add-friend-input");
@@ -42,51 +56,66 @@
       let currentUser = null;
 
       async function fetchFriends() {
-        const { data: friends, error } = await supabase
+        if (!currentUser) return;
+        friendError.textContent = "";
+
+        const { data: friendsData, error } = await supabase
           .from("friends")
           .select(
-            "friend_id, profiles:friend_id(username), stats:friend_id(workout_stats:friend_id(total_pushups, total_squats, total_situps))"
+            `
+            friend_id,
+            profiles:friend_id (
+              username,
+              workout_stats ( total_pushups, total_squats, total_situps )
+            )
+          `
           )
           .eq("user_id", currentUser.id);
 
         if (error) {
+          console.error("Error fetching friends:", error);
           friendError.textContent = "Failed to load friends list.";
           return;
         }
 
-        const sorted = friends.sort((a, b) => {
-          const aTotal =
-            (a.stats?.total_pushups || 0) +
-            (a.stats?.total_squats || 0) +
-            (a.stats?.total_situps || 0);
-          const bTotal =
-            (b.stats?.total_pushups || 0) +
-            (b.stats?.total_squats || 0) +
-            (b.stats?.total_situps || 0);
+        const processedFriends = friendsData.map((f) => {
+          const profile = f.profiles;
+          const stats =
+            profile?.workout_stats && profile.workout_stats.length > 0
+              ? profile.workout_stats[0]
+              : { total_pushups: 0, total_squats: 0, total_situps: 0 };
+          return {
+            friend_id: f.friend_id,
+            username: profile?.username || "Unknown",
+            total_pushups: stats.total_pushups || 0,
+            total_squats: stats.total_squats || 0,
+            total_situps: stats.total_situps || 0,
+          };
+        });
+
+        const sortedFriends = processedFriends.sort((a, b) => {
+          const aTotal = a.total_pushups + a.total_squats + a.total_situps;
+          const bTotal = b.total_pushups + b.total_squats + b.total_situps;
           return bTotal - aTotal;
         });
 
-        friendsList.innerHTML = sorted
+        friendsList.innerHTML = sortedFriends
           .map((f, i) => {
-            const total =
-              (f.stats?.total_pushups || 0) +
-              (f.stats?.total_squats || 0) +
-              (f.stats?.total_situps || 0);
+            const totalWorkouts =
+              f.total_pushups + f.total_squats + f.total_situps;
             const isSelf = f.friend_id === currentUser.id;
             return `
-          <div class="friend-card" style="background:#507687; margin:10px 0; padding:1rem; border-radius:12px; color:#FCFAEE;">
+          <div class="friend-card">
             <strong>#${i + 1} ${
-              isSelf
-                ? '<span style="color:#FFD700">You</span>'
-                : f.profiles?.username || "Unknown"
+              isSelf ? '<span style="color:#FFD700">You</span>' : f.username
             }</strong><br />
-            Pushups: ${f.stats?.total_pushups || 0}, 
-            Squats: ${f.stats?.total_squats || 0}, 
-            Situps: ${f.stats?.total_situps || 0}<br />
-            <em>Total Workouts: ${total}</em><br />
+            Pushups: ${f.total_pushups}, 
+            Squats: ${f.total_squats}, 
+            Situps: ${f.total_situps}<br />
+            <em>Total Workouts: ${totalWorkouts}</em><br />
             ${
               !isSelf
-                ? `<button class='remove-friend' data-id='${f.friend_id}' style='margin-top:8px;background:#B8001F;color:#FCFAEE;padding:0.4rem 0.8rem;border:none;border-radius:6px;'>Remove</button>`
+                ? `<button class='remove-friend' data-id='${f.friend_id}'>Remove</button>`
                 : ""
             }
           </div>
@@ -95,32 +124,46 @@
           .join("");
 
         document.querySelectorAll(".remove-friend").forEach((btn) => {
-          btn.addEventListener("click", async () => {
-            const friendId = btn.dataset.id;
-            const { error } = await supabase
-              .from("friends")
-              .delete()
-              .eq("user_id", currentUser.id)
-              .eq("friend_id", friendId);
-
-            if (!error) fetchFriends();
+          btn.addEventListener("click", async (event) => {
+            const friendIdToRemove = event.target.dataset.id;
+            await removeFriend(friendIdToRemove);
           });
         });
       }
 
       async function addFriend() {
-        const username = addFriendInput.value.trim();
+        if (!currentUser) return;
+        const usernameToAdd = addFriendInput.value.trim();
         friendError.textContent = "";
+
+        if (!usernameToAdd) {
+          friendError.textContent = "Please enter a username.";
+          return;
+        }
+
+        // Prevent adding self if desired, though current structure allows it for leaderboard visibility
+        // const { data: { user: selfProfile } } = await supabase.auth.getUser();
+        // if (selfProfile && selfProfile.user_metadata?.username === usernameToAdd) {
+        //   friendError.textContent = "You cannot add yourself.";
+        //   return;
+        // }
 
         const { data: profile, error: lookupError } = await supabase
           .from("profiles")
           .select("id")
-          .eq("username", username)
+          .eq("username", usernameToAdd)
           .single();
 
         if (lookupError || !profile) {
           friendError.textContent = "User not found.";
+          console.error("User lookup error:", lookupError);
           return;
+        }
+
+        if (profile.id === currentUser.id) {
+          friendError.textContent =
+            "You are trying to add yourself. If you want to appear on your leaderboard, this is how!";
+          // Optionally, you could auto-add self to friends list on first load or signup.
         }
 
         const { data: existing, error: existingError } = await supabase
@@ -128,10 +171,17 @@
           .select("id")
           .eq("user_id", currentUser.id)
           .eq("friend_id", profile.id)
-          .single();
+          .maybeSingle(); // Use maybeSingle to not error if no row found
+
+        if (existingError && existingError.code !== "PGRST116") {
+          // PGRST116 is "No rows found"
+          console.error("Error checking existing friend:", existingError);
+          friendError.textContent = "Could not check friend status.";
+          return;
+        }
 
         if (existing) {
-          friendError.textContent = "You already added this friend.";
+          friendError.textContent = "You have already added this friend.";
           return;
         }
 
@@ -141,22 +191,60 @@
         });
 
         if (insertError) {
-          friendError.textContent = "Could not add friend.";
+          console.error("Error adding friend:", insertError);
+          friendError.textContent =
+            "Could not add friend. They may need to set up their profile first.";
           return;
         }
 
         addFriendInput.value = "";
-        fetchFriends();
+        fetchFriends(); // Refresh the list
+      }
+
+      async function removeFriend(friendIdToRemove) {
+        if (!currentUser || !friendIdToRemove) return;
+
+        const confirmed = confirm(
+          "Are you sure you want to remove this friend?"
+        );
+        if (!confirmed) return;
+
+        const { error } = await supabase
+          .from("friends")
+          .delete()
+          .eq("user_id", currentUser.id)
+          .eq("friend_id", friendIdToRemove);
+
+        if (error) {
+          console.error("Error removing friend:", error);
+          friendError.textContent = "Could not remove friend.";
+        } else {
+          fetchFriends(); // Refresh the list
+        }
       }
 
       addFriendButton.addEventListener("click", addFriend);
 
+      // Initial load
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user) {
           currentUser = session.user;
           fetchFriends();
         } else {
-          window.location.href = "index.html"; // Redirect if not logged in
+          // Redirect to login if not authenticated, or show a message
+          window.location.href = "index.html";
+        }
+      });
+      // Listen for auth changes to keep currentUser updated
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_IN") {
+          currentUser = session.user;
+          fetchFriends();
+        } else if (event === "SIGNED_OUT") {
+          currentUser = null;
+          friendsList.innerHTML =
+            "<p>Please log in to see the leaderboard.</p>";
+          // Optionally redirect: window.location.href = "index.html";
         }
       });
     </script>

@@ -26,7 +26,25 @@
 }
 
 .friend-card button:hover {
-  background-color: #c44c2b;
+  background-color: #c44c2b; /* Consider using a darker shade of var(--accent) if possible */
+}
+
+.add-friend-section {
+  background: var(--primary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.add-friend-section h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(
+    --secondary
+  ); /* Ensure --secondary is defined and contrasts with --primary */
+  text-shadow: none; /* Removing text-shadow if primary is light and secondary is dark */
 }
 
 #add-friend-input {
@@ -35,10 +53,13 @@
   max-width: 300px;
   border: 1px solid var(--accent);
   border-radius: 8px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem; /* Increased space */
   font-size: 1rem;
   background-color: var(--background);
   color: var(--text);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #add-friend-button {
@@ -49,22 +70,26 @@
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; /* Consistent with input or remove if error is primary feedback */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #add-friend-button:hover {
-  background-color: #c44c2b;
+  background-color: #c44c2b; /* Consider using a darker shade of var(--accent) */
 }
 
 #friend-error {
-  color: #ffcccc;
+  color: #ffcccc; /* Light red for error text */
   font-size: 0.9rem;
   text-align: center;
-  margin-top: 0.25rem;
+  margin-top: 1rem; /* Ensure space above error */
+  min-height: 1em; /* Prevent layout shift when error appears/disappears */
 }
 
 header nav a {
-  color: var(--text);
+  color: var(--text); /* Ensure this is visible on header background */
   text-decoration: underline;
   font-weight: 600;
 }
