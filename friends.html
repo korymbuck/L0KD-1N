@@ -6,7 +6,6 @@
     <title>Leaderboard</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="styles-friends.css" />
-    <!-- Removed duplicate styles.css link -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
   <body>
@@ -43,7 +42,6 @@
 
     <script type="module">
       const supabaseUrl = "https://nglasnytfnyavhsxjuau.supabase.co";
-      // Use the correct Supabase Key from your script.js
       const supabaseKey =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw";
       const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -141,13 +139,6 @@
           return;
         }
 
-        // Prevent adding self if desired, though current structure allows it for leaderboard visibility
-        // const { data: { user: selfProfile } } = await supabase.auth.getUser();
-        // if (selfProfile && selfProfile.user_metadata?.username === usernameToAdd) {
-        //   friendError.textContent = "You cannot add yourself.";
-        //   return;
-        // }
-
         const { data: profile, error: lookupError } = await supabase
           .from("profiles")
           .select("id")
@@ -163,7 +154,6 @@
         if (profile.id === currentUser.id) {
           friendError.textContent =
             "You are trying to add yourself. If you want to appear on your leaderboard, this is how!";
-          // Optionally, you could auto-add self to friends list on first load or signup.
         }
 
         const { data: existing, error: existingError } = await supabase
@@ -171,10 +161,9 @@
           .select("id")
           .eq("user_id", currentUser.id)
           .eq("friend_id", profile.id)
-          .maybeSingle(); // Use maybeSingle to not error if no row found
+          .maybeSingle();
 
         if (existingError && existingError.code !== "PGRST116") {
-          // PGRST116 is "No rows found"
           console.error("Error checking existing friend:", existingError);
           friendError.textContent = "Could not check friend status.";
           return;

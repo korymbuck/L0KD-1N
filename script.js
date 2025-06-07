@@ -112,7 +112,7 @@ function resetWorkoutStats() {
 async function updateUIState(user) {
   if (user) {
     hideAuthModal();
-    userBar.style.display = "flex"; // This will now correctly target the user-bar
+    userBar.style.display = "flex";
 
     try {
       const { data: profile } = await supabase
@@ -121,21 +121,19 @@ async function updateUIState(user) {
         .eq("id", user.id)
         .single();
 
-      // Ensure userInfoDiv is correctly populated
       userInfoDiv.textContent = `Logged in as: ${
         profile?.username || user.email
       }`;
       loadWorkoutStats(user.id);
     } catch (err) {
       console.error("Failed to load user profile:", err);
-      // Fallback if profile fetch fails but user exists
+
       userInfoDiv.textContent = `Logged in as: ${user.email}`;
     }
   } else {
     userBar.style.display = "none";
     userInfoDiv.textContent = "";
     resetWorkoutStats();
-    // showAuthModal(); // Consider if you always want to show modal on logout/initial load without session
   }
 }
 
@@ -147,14 +145,12 @@ async function loadWorkoutStats(userId) {
       .eq("user_id", userId)
       .single();
 
-    // PGRST116: no rows found, not an error for .single() if we handle it (data will be null)
     if (error && error.code !== "PGRST116") throw error;
 
-    const now = new Date(); // Current date/time in local timezone
+    const now = new Date();
     const todayLocalDate = getLocalDateString(now);
 
     if (data) {
-      // Assuming data.last_updated is an ISO string from Supabase (stored as TIMESTAMPTZ)
       const lastUpdatedDateObj = data.last_updated
         ? new Date(data.last_updated)
         : null;
@@ -178,7 +174,7 @@ async function loadWorkoutStats(userId) {
             daily_pushups: 0,
             daily_squats: 0,
             daily_situps: 0,
-            last_updated: now.toISOString(), // Store current timestamp (UTC)
+            last_updated: now.toISOString(),
           })
           .eq("user_id", userId);
         if (updateError) {
@@ -188,8 +184,6 @@ async function loadWorkoutStats(userId) {
         }
       }
     } else {
-      // No data found, implies new user for workout_stats table
-      // Reset local workoutStats for this new user context
       workoutStats = {
         pushups: 0,
         squats: 0,
@@ -198,7 +192,7 @@ async function loadWorkoutStats(userId) {
         totalSquats: 0,
         totalSitups: 0,
       };
-      // Insert new record for the user
+
       const { error: insertError } = await supabase
         .from("workout_stats")
         .insert({
@@ -209,7 +203,7 @@ async function loadWorkoutStats(userId) {
           total_pushups: 0,
           total_squats: 0,
           total_situps: 0,
-          last_updated: now.toISOString(), // Store current timestamp (UTC)
+          last_updated: now.toISOString(),
         });
       if (insertError) {
         console.error("Error inserting new workout stats record:", insertError);
@@ -237,7 +231,7 @@ async function saveWorkoutStats(userId) {
         total_pushups: workoutStats.totalPushups,
         total_squats: workoutStats.totalSquats,
         total_situps: workoutStats.totalSitups,
-        last_updated: new Date().toISOString(), // Update last_updated on every save
+        last_updated: new Date().toISOString(),
       },
       { onConflict: "user_id" }
     );
@@ -352,7 +346,7 @@ supabase.auth.getSession().then(({ data: { session } }) => {
     currentUser = session.user;
     updateUIState(currentUser);
   } else {
-    showAuthModal(); // 👈 add this
+    showAuthModal();
     updateUIState(null);
   }
 });
