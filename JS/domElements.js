@@ -1,0 +1,24 @@
+export const loginEmailInput = document.getElementById("login-email");
+export const loginPasswordInput = document.getElementById("login-password");
+export const loginButton = document.getElementById("login-button");
+export const signupEmailInput = document.getElementById("signup-email");
+export const signupPasswordInput = document.getElementById("signup-password");
+export const signupUsernameInput = document.getElementById("signup-username");
+export const signupButton = document.getElementById("signup-button");
+export const authErrorDiv = document.getElementById("auth-error");
+export const userBar = document.getElementById("user-bar");
+export const logoutButton = document.getElementById("logout-button");
+export const userInfoDiv = document.getElementById("user-info");
+export const authModal = document.getElementById("auth-modal");
+export const authBackdrop = document.getElementById("auth-backdrop");
+export const authToggle = document.getElementById("auth-toggle");
+export const authTitle = document.getElementById("auth-title");
+export const signupFields = document.getElementById("signup-fields");
+
+export const pushupsCount = document.getElementById("pushups-count");
+export const squatsCount = document.getElementById("squats-count");
+export const situpsCount = document.getElementById("situps-count");
+export const allTimePushups = document.getElementById("all-time-pushups");
+export const allTimeSquats = document.getElementById("all-time-squats");
+export const allTimeSitups = document.getElementById("all-time-situps");
+export const workoutButtons = document.querySelectorAll(".workout button");
