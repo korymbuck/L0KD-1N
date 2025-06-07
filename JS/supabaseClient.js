@@ -1,2 +1,4 @@
-import { supabaseUrl, supabaseKey } from "./config.js";
-export const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+export const supabase = window.supabase.createClient(
+  "https://nglasnytfnyavhsxjuau.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbGFzbnl0Zm55YXZoc3hqdWF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MTg4OTQsImV4cCI6MjA2MjM5NDg5NH0.tIDB4uS0jYojQmWRG2EnrxXss3PhcWbFCnVF4_j4dzw"
+);
