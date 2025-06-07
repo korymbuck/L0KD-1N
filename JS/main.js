@@ -8,18 +8,24 @@ UI.updateAuthFormUI(false);
 
 if (DOM.loginButton) {
   DOM.loginButton.addEventListener("click", async () => {
+    console.log("Login button clicked"); // <-- ADD THIS
     const email = DOM.loginEmailInput.value.trim();
     const password = DOM.loginPasswordInput.value.trim();
+    console.log("Attempting login with:", { email, password }); // <-- ADD THIS
     await Auth.signInUser(email, password);
+    console.log("Auth.signInUser call completed in main.js"); // <-- ADD THIS
   });
 }
 
 if (DOM.signupButton) {
   DOM.signupButton.addEventListener("click", async () => {
+    console.log("Signup button clicked"); // <-- ADD THIS
     const email = DOM.signupEmailInput.value.trim();
     const password = DOM.signupPasswordInput.value.trim();
     const username = DOM.signupUsernameInput.value.trim();
+    console.log("Attempting signup with:", { email, password, username }); // <-- ADD THIS
     const result = await Auth.signUpUser(email, password, username);
+    console.log("Auth.signUpUser call completed in main.js, result:", result); // <-- ADD THIS
     if (!result.success && result.error?.message === "Username taken") {
       if (DOM.signupUsernameInput) DOM.signupUsernameInput.focus();
     }
