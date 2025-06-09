@@ -7,7 +7,6 @@ import {
 } from "./workouts.js";
 
 let localCurrentUser = null;
-
 export function getCurrentUser() {
   return localCurrentUser;
 }
