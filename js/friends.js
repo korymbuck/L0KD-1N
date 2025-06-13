@@ -15,8 +15,9 @@ async function fetchFriendsData() {
       .from("friends")
       .select(
         `
+                user_id, 
                 friend_id,
-                profiles:friend_id (
+                profiles:profiles!friends_friend_id_fkey ( 
                     username,
                     workout_stats ( total_pushups, total_squats, total_situps )
                 )
