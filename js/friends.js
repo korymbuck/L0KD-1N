@@ -17,7 +17,7 @@ async function fetchFriendsData() {
         `
                 user_id, 
                 friend_id,
-                profiles:profiles!friends_friend_id_fkey ( 
+                profiles:profiles!friends_friend_id_fkey1 ( 
                     username,
                     workout_stats ( total_pushups, total_squats, total_situps )
                 )
