@@ -144,6 +144,3 @@ export async function handleWorkoutIncrement(workoutType, increment) {
   updateWorkoutDisplayOnUI();
   await saveWorkoutStatsToDB(user.id);
 }
-
-console.log("Loading workout stats for user:", userId);
-console.log("Supabase response:", { data, error });
