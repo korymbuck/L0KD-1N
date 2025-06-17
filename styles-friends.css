@@ -93,3 +93,83 @@ header nav a {
   text-decoration: underline;
   font-weight: 600;
 }
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: var(--primary);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+}
+
+.close-modal-button {
+  background-color: var(--accent);
+  color: var(--text);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.close-modal-button:hover {
+  background-color: #c44c2b;
+}
+
+/* Friend Card Styles */
+.friend-card {
+  background: var(--primary);
+  margin: 10px 0;
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: var(--text);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.friend-card h3 {
+  margin: 0;
+  margin-bottom: 1rem;
+  color: var(--secondary);
+}
+
+.workout-stats {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.workout {
+  background: var(--background);
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  flex: 1;
+}
+
+.workout h4 {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: var(--secondary);
+}
+
+.workout p {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text);
+}

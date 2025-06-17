@@ -3,6 +3,21 @@ const addFriendInputEl = document.getElementById("add-friend-input");
 const addFriendButtonEl = document.getElementById("add-friend-button");
 const friendsListEl = document.getElementById("friends-list");
 const friendErrorEl = document.getElementById("friend-error");
+const addFriendModal = document.getElementById("add-friend-modal");
+const openAddFriendModalButton = document.getElementById(
+  "open-add-friend-modal"
+);
+const closeAddFriendModalButton = document.getElementById(
+  "close-add-friend-modal"
+);
+
+openAddFriendModalButton.addEventListener("click", () => {
+  addFriendModal.style.display = "flex";
+});
+
+closeAddFriendModalButton.addEventListener("click", () => {
+  addFriendModal.style.display = "none";
+});
 
 let pageCurrentUser = null;
 
@@ -15,13 +30,13 @@ async function fetchFriendsData() {
       .from("friends")
       .select(
         `
-                user_id, 
-                friend_id,
-                profiles:profiles!friends_friend_id_fkey1 ( 
-                    username,
-                    workout_stats ( total_pushups, total_squats, total_situps )
-                )
-            `
+          user_id, 
+          friend_id,
+          profiles:profiles!friends_friend_id_fkey1 ( 
+            username,
+            workout_stats ( total_pushups, total_squats, total_situps )
+          )
+        `
       )
       .eq("user_id", pageCurrentUser.id);
 
@@ -42,31 +57,30 @@ async function fetchFriendsData() {
       };
     });
 
-    const sortedFriends = processedFriends.sort((a, b) => {
-      const aTotal = a.total_pushups + a.total_squats + a.total_situps;
-      const bTotal = b.total_pushups + b.total_squats + b.total_situps;
-      return bTotal - aTotal;
-    });
-
-    friendsListEl.innerHTML = sortedFriends
-      .map((f, i) => {
-        const totalWorkouts = f.total_pushups + f.total_squats + f.total_situps;
-        const isSelf = f.friend_id === pageCurrentUser.id;
+    friendsListEl.innerHTML = processedFriends
+      .map((f) => {
         return `
-                <div class="friend-card">
-                    <strong>#${i + 1} ${
-          isSelf ? '<span style="color:#FFD700">You</span>' : f.username
-        }</strong><br />
-                    Pushups: ${f.total_pushups}, Squats: ${
-          f.total_squats
-        }, Situps: ${f.total_situps}<br />
-                    <em>Total Workouts: ${totalWorkouts}</em><br />
-                    ${
-                      !isSelf
-                        ? `<button class='remove-friend' data-id='${f.friend_id}'>Remove</button>`
-                        : ""
-                    }
-                </div>`;
+          <div class="friend-card">
+            <h3>${f.username}</h3>
+            <div class="workout-stats">
+              <div class="workout">
+                <h4>Push-ups</h4>
+                <p>${f.total_pushups}</p>
+              </div>
+              <div class="workout">
+                <h4>Squats</h4>
+                <p>${f.total_squats}</p>
+              </div>
+              <div class="workout">
+                <h4>Sit-ups</h4>
+                <p>${f.total_situps}</p>
+              </div>
+            </div>
+            <button class="remove-friend" data-id="${f.friend_id}">
+              Remove Friend
+            </button>
+          </div>
+        `;
       })
       .join("");
 
