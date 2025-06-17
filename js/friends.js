@@ -3,25 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const addFriendButtonEl = document.getElementById("add-friend-button");
   const friendsListEl = document.getElementById("friends-list");
   const friendErrorEl = document.getElementById("friend-error");
-  const addFriendModal = document.getElementById("add-friend-modal");
-  const openAddFriendModalButton = document.getElementById(
-    "open-add-friend-modal"
-  );
-  const closeAddFriendModalButton = document.getElementById(
-    "close-add-friend-modal"
-  );
-
-  if (openAddFriendModalButton) {
-    openAddFriendModalButton.addEventListener("click", () => {
-      addFriendModal.style.display = "flex";
-    });
-  }
-
-  if (closeAddFriendModalButton) {
-    closeAddFriendModalButton.addEventListener("click", () => {
-      addFriendModal.style.display = "none";
-    });
-  }
 
   let pageCurrentUser = null;
 
@@ -36,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
           `
             user_id, 
             friend_id,
-            profiles:profiles!friends_friend_id_fkey1 ( 
+            profiles:friend_id (
               username,
               workout_stats ( total_pushups, total_squats, total_situps )
             )
@@ -64,22 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
       friendsListEl.innerHTML = processedFriends
         .map((f) => {
           return `
-            <div class="friend-card">
+            <div>
               <h3>${f.username}</h3>
-              <div class="workout-stats">
-                <div class="workout">
-                  <h4>Push-ups</h4>
-                  <p>${f.total_pushups}</p>
-                </div>
-                <div class="workout">
-                  <h4>Squats</h4>
-                  <p>${f.total_squats}</p>
-                </div>
-                <div class="workout">
-                  <h4>Sit-ups</h4>
-                  <p>${f.total_situps}</p>
-                </div>
-              </div>
+              <p>Push-ups: ${f.total_pushups}</p>
+              <p>Squats: ${f.total_squats}</p>
+              <p>Sit-ups: ${f.total_situps}</p>
               <button class="remove-friend" data-id="${f.friend_id}">
                 Remove Friend
               </button>
@@ -137,9 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Clear the input field and close the modal
+      // Clear the input field
       addFriendInputEl.value = "";
-      addFriendModal.style.display = "none";
 
       // Refresh the friends list
       fetchFriendsData();
