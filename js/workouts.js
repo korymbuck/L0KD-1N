@@ -13,6 +13,8 @@ let localWorkoutStats = {
 };
 
 export function updateWorkoutDisplayOnUI() {
+  console.log("Updating UI with localWorkoutStats:", localWorkoutStats); // Debugging log
+
   if (DOM.pushupsCount)
     DOM.pushupsCount.textContent = localWorkoutStats.pushups;
   if (DOM.squatsCount) DOM.squatsCount.textContent = localWorkoutStats.squats;
@@ -37,12 +39,15 @@ export function resetLocalWorkoutStats() {
 }
 
 export async function loadUserWorkoutStats(userId) {
+  console.log("Loading workout stats for user:", userId); // Debugging log
   try {
     const { data, error } = await supabase
       .from("workout_stats")
       .select("*")
       .eq("user_id", userId)
       .single();
+
+    console.log("Supabase response:", { data, error }); // Debugging log
 
     if (error && error.code !== "PGRST116") throw error;
 
@@ -56,6 +61,8 @@ export async function loadUserWorkoutStats(userId) {
       const lastLocalDate = getLocalDateString(lastUpdatedDateObj);
       const isNewDay = lastLocalDate !== todayLocalDate;
 
+      console.log("Data fetched from workout_stats:", data); // Debugging log
+
       localWorkoutStats = {
         pushups: isNewDay ? 0 : data.daily_pushups || 0,
         squats: isNewDay ? 0 : data.daily_squats || 0,
@@ -64,6 +71,8 @@ export async function loadUserWorkoutStats(userId) {
         totalSquats: data.total_squats || 0,
         totalSitups: data.total_situps || 0,
       };
+
+      console.log("Updated localWorkoutStats:", localWorkoutStats); // Debugging log
 
       if (isNewDay) {
         await supabase
@@ -77,6 +86,7 @@ export async function loadUserWorkoutStats(userId) {
           .eq("user_id", userId);
       }
     } else {
+      console.log("No data found for user. Initializing stats."); // Debugging log
       resetLocalWorkoutStats();
       await supabase.from("workout_stats").insert({
         user_id: userId,
