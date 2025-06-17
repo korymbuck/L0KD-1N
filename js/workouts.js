@@ -91,8 +91,6 @@ export async function loadUserWorkoutStats(userId) {
     }
   } catch (err) {
     console.error("Error loading workout stats:", err);
-    if (DOM.authErrorDiv)
-      DOM.authErrorDiv.textContent = "Error loading workout stats";
     resetLocalWorkoutStats();
   }
   updateWorkoutDisplayOnUI();
@@ -146,3 +144,6 @@ export async function handleWorkoutIncrement(workoutType, increment) {
   updateWorkoutDisplayOnUI();
   await saveWorkoutStatsToDB(user.id);
 }
+
+console.log("Loading workout stats for user:", userId);
+console.log("Supabase response:", { data, error });
