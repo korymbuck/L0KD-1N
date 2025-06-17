@@ -100,7 +100,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Initialize the page
+  async function addFriendData() {
+    const friendUsername = addFriendInputEl.value.trim();
+    if (!friendUsername) {
+      friendErrorEl.textContent = "Please enter a username.";
+      return;
+    }
+
+    friendErrorEl.textContent = ""; // Clear any previous errors
+
+    try {
+      // Fetch the friend's profile by username
+      const { data: friendProfile, error: fetchError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("username", friendUsername)
+        .single();
+
+      if (fetchError) {
+        console.error("Error fetching friend's profile:", fetchError);
+        friendErrorEl.textContent = "User not found.";
+        return;
+      }
+
+      const friendId = friendProfile.id;
+
+      // Add the friend to the "friends" table
+      const { error: insertError } = await supabase.from("friends").insert({
+        user_id: pageCurrentUser.id,
+        friend_id: friendId,
+      });
+
+      if (insertError) {
+        console.error("Error adding friend:", insertError);
+        friendErrorEl.textContent = "Failed to add friend.";
+        return;
+      }
+
+      // Clear the input field and close the modal
+      addFriendInputEl.value = "";
+      addFriendModal.style.display = "none";
+
+      // Refresh the friends list
+      fetchFriendsData();
+    } catch (error) {
+      console.error("Error in addFriendData:", error);
+      friendErrorEl.textContent = "An unexpected error occurred.";
+    }
+  }
+
+  async function removeFriendData(friendId) {
+    try {
+      const { error } = await supabase
+        .from("friends")
+        .delete()
+        .eq("user_id", pageCurrentUser.id)
+        .eq("friend_id", friendId);
+
+      if (error) {
+        console.error("Error removing friend:", error);
+        friendErrorEl.textContent = "Failed to remove friend.";
+        return;
+      }
+
+      // Refresh the friends list
+      fetchFriendsData();
+    } catch (error) {
+      console.error("Error in removeFriendData:", error);
+      friendErrorEl.textContent = "An unexpected error occurred.";
+    }
+  }
+
   function initializeFriendsPage() {
     if (addFriendButtonEl) {
       addFriendButtonEl.addEventListener("click", addFriendData);
